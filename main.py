@@ -5,7 +5,6 @@ Features Excel-based data storage with default and working copies for demo reset
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -49,28 +48,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files
+# Static file path
 static_path = Path(__file__).parent / "static"
-if static_path.exists():
-    app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 
-# Dashboard route
+# Static file routes
+@app.get("/")
+async def root():
+    """Root redirects to dashboard."""
+    return FileResponse(static_path / "dashboard.html", media_type="text/html")
+
 @app.get("/dashboard")
 async def dashboard():
-    """Serve the data dashboard for demos."""
-    dashboard_file = static_path / "dashboard.html"
-    if dashboard_file.exists():
-        return FileResponse(dashboard_file, media_type="text/html")
-    return {"error": "Dashboard not found"}
+    """Serve dashboard."""
+    return FileResponse(static_path / "dashboard.html", media_type="text/html")
 
-# Voice demo route
+@app.get("/dashboard.html")
+async def dashboard_html():
+    """Serve dashboard."""
+    return FileResponse(static_path / "dashboard.html", media_type="text/html")
+
+@app.get("/dashboard.js")
+async def dashboard_js():
+    """Serve dashboard JS."""
+    return FileResponse(static_path / "dashboard.js", media_type="application/javascript")
+
+@app.get("/dashboard.css")
+async def dashboard_css():
+    """Serve dashboard CSS."""
+    return FileResponse(static_path / "dashboard.css", media_type="text/css")
+
 @app.get("/voice")
-async def voice_demo():
-    """Serve the voice interaction demo."""
-    voice_file = static_path / "voice-demo.html"
-    if voice_file.exists():
-        return FileResponse(voice_file, media_type="text/html")
-    return {"error": "Voice demo not found"}
+async def voice():
+    """Serve voice demo."""
+    return FileResponse(static_path / "voice-demo.html", media_type="text/html")
 
 # Register routers
 app.include_router(health_router)
