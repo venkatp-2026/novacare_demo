@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaCare Voice Demo - Patient Appointment Assistant</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .voice-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .voice-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        
+        .voice-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .voice-status {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .voice-prompt {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .mic-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mic-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2);
+        }
+        
+        .mic-button.listening {
+            background: var(--danger-color);
+            animation: pulse-ring 1.5s infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        
+        .transcript-area {
+            background: var(--background);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            min-height: 150px;
+            text-align: left;
+        }
+        
+        .transcript-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .transcript-text {
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .response-area {
+            background: #dbeafe;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            text-align: left;
+        }
+        
+        .response-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .response-text {
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .demo-commands {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .command-example {
+            padding: 1rem;
+            background: var(--background);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .command-text {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .command-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .browser-warning {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🏥</div>
+                <div class="logo-text">
+                    <h1>NovaCare Health</h1>
+                    <p>Voice-Enabled Patient Assistant Demo</p>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>Voice Ready</span>
+            </div>
+        </header>
+
+        <div class="voice-container">
+            <div class="voice-card">
+                <div class="voice-icon" id="voice-icon">🎤</div>
+                <div class="voice-status" id="voice-status">Ready to assist</div>
+                <div class="voice-prompt" id="voice-prompt">Click the microphone to start</div>
+                
+                <button class="mic-button" id="mic-button" onclick="toggleListening()">
+                    🎤
+                </button>
+                
+                <div class="transcript-area">
+                    <div class="transcript-label">Your Request:</div>
+                    <div class="transcript-text" id="transcript">Click the microphone and say something like "Show my appointments"</div>
+                </div>
+                
+                <div class="response-area" id="response-area" style="display: none;">
+                    <div class="response-label">🤖 Assistant Response:</div>
+                    <div class="response-text" id="response-text"></div>
+                </div>
+            </div>
+
+            <div class="demo-commands">
+                <h2 style="margin-bottom: 1.5rem;">📝 Try These Commands:</h2>
+                
+                <div class="command-example">
+                    <div class="command-text">"Show my appointments"</div>
+                    <div class="command-desc">Displays your upcoming appointments</div>
+                </div>
+                
+                <div class="command-example">
+                    <div class="command-text">"I need to reschedule my appointment"</div>
+                    <div class="command-desc">Starts the rescheduling process</div>
+                </div>
+                
+                <div class="command-example">
+                    <div class="command-text">"What slots are available?"</div>
+                    <div class="command-desc">Shows available appointment time slots</div>
+                </div>
+                
+                <div class="command-example">
+                    <div class="command-text">"Verify my identity"</div>
+                    <div class="command-desc">Initiates identity verification process</div>
+                </div>
+                
+                <div style="margin-top: 2rem; padding: 1rem; background: #f0f9ff; border-radius: 8px;">
+                    <strong>💡 Demo Tips:</strong>
+                    <ul style="margin: 0.5rem 0 0 1.5rem; color: var(--text-secondary);">
+                        <li>Speak clearly and naturally</li>
+                        <li>Uses default patient PAT-001 (Jane Smith) for demo</li>
+                        <li>Responses are simulated based on actual API data</li>
+                        <li>Works best in Chrome, Edge, or Safari</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="dashboard.js"></script>
+    <script>
+        let recognition;
+        let isListening = false;
+        const API_TOKEN = 'dev-token-replace-in-production';
+        const API_BASE = window.location.origin;
+        
+        // Initialize Speech Recognition
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            recognition.onresult = handleSpeechResult;
+            recognition.onerror = handleSpeechError;
+            recognition.onend = handleSpeechEnd;
+        } else {
+            document.querySelector('.voice-card').innerHTML = `
+                <div class="browser-warning">
+                    <strong>⚠️ Speech Recognition Not Supported</strong><br>
+                    Please use Chrome, Edge, or Safari to try the voice demo.
+                </div>
+            `;
+        }
+        
+        // Initialize Text-to-Speech
+        const synthesis = window.speechSynthesis;
+        
+        function toggleListening() {
+            if (!recognition) return;
+            
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        }
+        
+        function startListening() {
+            isListening = true;
+            document.getElementById('mic-button').classList.add('listening');
+            document.getElementById('voice-icon').textContent = '🔴';
+            document.getElementById('voice-status').textContent = 'Listening...';
+            document.getElementById('voice-prompt').textContent = 'Speak now';
+            document.getElementById('transcript').textContent = 'Listening...';
+            
+            try {
+                recognition.start();
+            } catch (error) {
+                console.error('Recognition error:', error);
+                stopListening();
+            }
+        }
+        
+        function stopListening() {
+            isListening = false;
+            document.getElementById('mic-button').classList.remove('listening');
+            document.getElementById('voice-icon').textContent = '🎤';
+            document.getElementById('voice-status').textContent = 'Processing...';
+            document.getElementById('voice-prompt').textContent = 'Please wait';
+            
+            if (recognition) {
+                recognition.stop();
+            }
+        }
+        
+        function handleSpeechResult(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('transcript').textContent = transcript;
+            processCommand(transcript);
+        }
+        
+        function handleSpeechError(event) {
+            console.error('Speech recognition error:', event.error);
+            document.getElementById('transcript').textContent = `Error: ${event.error}`;
+            resetVoiceUI();
+        }
+        
+        function handleSpeechEnd() {
+            if (isListening) {
+                resetVoiceUI();
+            }
+        }
+        
+        function resetVoiceUI() {
+            isListening = false;
+            document.getElementById('mic-button').classList.remove('listening');
+            document.getElementById('voice-icon').textContent = '🎤';
+            document.getElementById('voice-status').textContent = 'Ready to assist';
+            document.getElementById('voice-prompt').textContent = 'Click the microphone to start';
+        }
+        
+        async function processCommand(transcript) {
+            const command = transcript.toLowerCase();
+            let response = '';
+            
+            try {
+                if (command.includes('appointment') && (command.includes('show') || command.includes('my'))) {
+                    // Get appointments
+                    const data = await fetch(`${API_BASE}/v1/patients/PAT-001/appointments`, {
+                        headers: { 'Authorization': `Bearer ${API_TOKEN}` }
+                    }).then(r => r.json());
+                    
+                    if (data.length > 0) {
+                        response = `You have ${data.length} upcoming appointments. Your next appointment is on ${data[0].date} at ${data[0].time} with ${data[0].provider} for ${data[0].type}.`;
+                    } else {
+                        response = 'You have no upcoming appointments scheduled.';
+                    }
+                    
+                } else if (command.includes('reschedule')) {
+                    response = 'I can help you reschedule. Let me show you the available time slots. Would you like to see slots for next week?';
+                    
+                } else if (command.includes('slot') || command.includes('available')) {
+                    const data = await fetch(`${API_BASE}/v1/appointments/available-slots`, {
+                        headers: { 'Authorization': `Bearer ${API_TOKEN}` }
+                    }).then(r => r.json());
+                    
+                    const available = data.filter(s => s.available).slice(0, 3);
+                    response = `I found ${available.length} available slots. The first available is ${available[0].date} at ${available[0].time} with ${available[0].provider}.`;
+                    
+                } else if (command.includes('verify') || command.includes('identity')) {
+                    response = 'For identity verification, I will need your date of birth. For this demo, you are Jane Smith, born on March 15, 1985. Identity verified successfully.';
+                    
+                } else {
+                    response = 'I understand you said: "' + transcript + '". Try asking about your appointments, rescheduling, or available slots.';
+                }
+                
+                displayResponse(response);
+                speak(response);
+                
+            } catch (error) {
+                response = 'Sorry, I encountered an error processing your request. Please try again.';
+                displayResponse(response);
+                speak(response);
+            }
+        }
+        
+        function displayResponse(text) {
+            document.getElementById('response-text').textContent = text;
+            document.getElementById('response-area').style.display = 'block';
+            resetVoiceUI();
+        }
+        
+        function speak(text) {
+            if (!synthesis) return;
+            
+            // Cancel any ongoing speech
+            synthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            
+            synthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>

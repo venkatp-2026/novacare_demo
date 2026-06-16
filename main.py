@@ -5,7 +5,10 @@ Features Excel-based data storage with default and working copies for demo reset
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from config import API_TITLE, API_DESCRIPTION, API_VERSION, ALLOWED_ORIGINS
 from data import load_data_on_startup
@@ -45,6 +48,29 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files
+static_path = Path(__file__).parent / "static"
+if static_path.exists():
+    app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+
+# Dashboard route
+@app.get("/dashboard")
+async def dashboard():
+    """Serve the data dashboard for demos."""
+    dashboard_file = static_path / "dashboard.html"
+    if dashboard_file.exists():
+        return FileResponse(dashboard_file)
+    return {"error": "Dashboard not found"}
+
+# Voice demo route
+@app.get("/voice")
+async def voice_demo():
+    """Serve the voice interaction demo."""
+    voice_file = static_path / "voice-demo.html"
+    if voice_file.exists():
+        return FileResponse(voice_file)
+    return {"error": "Voice demo not found"}
 
 # Register routers
 app.include_router(health_router)

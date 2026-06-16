@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaCare Health - Data Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🏥</div>
+                <div class="logo-text">
+                    <h1>NovaCare Health</h1>
+                    <p>Epic EHR Integration Dashboard</p>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span id="system-status">System Operational</span>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card patients">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="total-patients">-</div>
+                    <div class="stat-label">Active Patients</div>
+                </div>
+            </div>
+            <div class="stat-card appointments">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="total-appointments">-</div>
+                    <div class="stat-label">Total Appointments</div>
+                </div>
+            </div>
+            <div class="stat-card slots">
+                <div class="stat-icon">🕐</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="available-slots">-</div>
+                    <div class="stat-label">Available Slots</div>
+                </div>
+            </div>
+            <div class="stat-card actions">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="audit-count">-</div>
+                    <div class="stat-label">Audit Events</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card patients-list">
+                <div class="card-header">
+                    <h2>👥 Patient Directory</h2>
+                    <span class="card-badge" id="patient-count">0</span>
+                </div>
+                <div class="card-content" id="patients-container">
+                    <div class="loading">Loading patients...</div>
+                </div>
+            </div>
+
+            <div class="card appointments-upcoming">
+                <div class="card-header">
+                    <h2>📅 Upcoming Appointments</h2>
+                    <span class="card-badge" id="appointment-count">0</span>
+                </div>
+                <div class="card-content" id="appointments-container">
+                    <div class="loading">Loading appointments...</div>
+                </div>
+            </div>
+
+            <div class="card slots-available">
+                <div class="card-header">
+                    <h2>🕐 Available Time Slots</h2>
+                    <span class="card-badge" id="slots-count">0</span>
+                </div>
+                <div class="card-content" id="slots-container">
+                    <div class="loading">Loading slots...</div>
+                </div>
+            </div>
+
+            <div class="card recent-activity">
+                <div class="card-header">
+                    <h2>📝 Recent Activity</h2>
+                    <span class="card-badge" id="activity-count">0</span>
+                </div>
+                <div class="card-content" id="activity-container">
+                    <div class="loading">Loading activity...</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="refresh-info">
+                <span>Last Updated: <strong id="last-update">-</strong></span>
+                <span class="separator">•</span>
+                <span>Auto-refresh: <strong>Every 10s</strong></span>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh Now</button>
+                <button class="btn btn-primary" onclick="resetData()">🔄 Reset Demo Data</button>
+            </div>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
