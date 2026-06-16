@@ -60,7 +60,7 @@ async def dashboard():
     """Serve the data dashboard for demos."""
     dashboard_file = static_path / "dashboard.html"
     if dashboard_file.exists():
-        return FileResponse(dashboard_file)
+        return FileResponse(dashboard_file, media_type="text/html")
     return {"error": "Dashboard not found"}
 
 # Voice demo route
@@ -69,8 +69,25 @@ async def voice_demo():
     """Serve the voice interaction demo."""
     voice_file = static_path / "voice-demo.html"
     if voice_file.exists():
-        return FileResponse(voice_file)
+        return FileResponse(voice_file, media_type="text/html")
     return {"error": "Voice demo not found"}
+
+# Explicit routes for static files (Vercel compatibility)
+@app.get("/static/dashboard.js")
+async def get_dashboard_js():
+    """Serve dashboard JavaScript."""
+    js_file = static_path / "dashboard.js"
+    if js_file.exists():
+        return FileResponse(js_file, media_type="application/javascript")
+    return {"error": "File not found"}
+
+@app.get("/static/dashboard.css")
+async def get_dashboard_css():
+    """Serve dashboard CSS."""
+    css_file = static_path / "dashboard.css"
+    if css_file.exists():
+        return FileResponse(css_file, media_type="text/css")
+    return {"error": "File not found"}
 
 # Register routers
 app.include_router(health_router)
