@@ -1,0 +1,298 @@
+﻿FDE Pre-Interview Technical Exercise
+Role: Forward Deployed Engineer (FDE) — AI & Solutions
+Format: Take-home implementation exercise + live interview review
+Platform: Zendesk Suite Enterprise with AI Agents Advanced, Action Builder, and ZAF
+Table of Contents
+Table of Contents
+Introduction & Overview
+Environment Setup
+The Scenario: NovaCare Health
+Part 1 — AI Agent Design
+Part 2 — Action Flow Configuration
+Part 3 — ZAF Sidebar App Development
+Mock API Guidance
+Timeline & Submission
+Interview Day: What to Expect
+Tips for Success
+
+Introduction & Overview
+Welcome to the FDE technical exercise. This is a hands-on implementation challenge where you will design and build a Zendesk AI deployment for an enterprise healthcare customer.
+What this exercise assesses:
+Your ability to configure Zendesk's AI and automation platform (AI Agents Advanced, Action Flows)
+Your approach to designing multi-step workflows with external system integrations
+Your development skills building within the Zendesk Apps Framework (ZAF)
+Your understanding of how platform capabilities map to real customer requirements — including constraints like compliance and data sensitivity
+What you will build:
+Over the next several days, you will implement a complete AI-powered support solution in your own Zendesk sandbox instance across 3 implementation parts:
+AI Agent configuration with use cases, procedures, escalation rules, and channel-specific behavior
+An Action Flow automating a multi-step patient workflow with external API integration
+A ZAF sidebar app that fetches patient data from an external system and displays it to agents
+You will also create a mock API simulating an external healthcare system (Epic EHR) to support your Action Flows and ZAF app.
+On interview day, you will walk the interviewer through your live implementation, explain your design decisions, and participate in a consulting scenario discussion.
+Environment Setup
+You will build your implementation in a Zendesk sandbox instance that you control. Follow these steps to set up your environment.
+Requesting a Zendesk Suite Enterprise Trial
+Navigate to zendesk.com/register and sign up for a Zendesk Suite Enterprise trial.
+Complete the onboarding wizard — you can use fictional company details (e.g., "NovaCare Health" as the company name to match the exercise scenario).
+Once your instance is provisioned, sign in to Admin Center to verify you have full administrative access.
+Required Platform Capabilities
+Enable or verify the following features in your trial instance:
+AI Agents Advanced add-on — Navigate to Admin Center > AI > AI Agents. Confirm that AI Agents Advanced is active. You will need this to configure use cases with procedures and escalation rules.
+Action Builder — Navigate to Admin Center > Apps and integrations > Actions > Action flows. Verify you can create new action flows with external API connections.
+Help Center — Navigate to Knowledge from Zendesk Products dropdown at the top left corner. Enable your Help Center (if not already enabled) by clicking Get started, then activate it by going to Settings > Help center settings > Activate. Note: Help Center is not activated by default. You will load sample knowledge base articles here to support AI Agent generative replies.
+Note: If your trial instance does not include AI Agents Advanced, contact your recruiting coordinator. We can provide sandbox access with all features enabled so you are not blocked.
+Development Tools
+You will need the following installed on your local machine:
+Node.js (v18 or later) — Required for ZAF app development using zcli, the Zendesk CLI tool. Install zcli globally via npm install -g @zendesk/zcli.
+An IDE of your choice — VS Code, WebStorm, or whichever editor you prefer for JavaScript/TypeScript development.
+A tool for creating mock APIs — You will build mock endpoints that simulate an external system (details in the Mock API Guidance section below). Use any framework or service you are comfortable with.
+Sample Data Setup
+Your Zendesk instance needs realistic sample data to demonstrate a working implementation. Create the following before interview day.
+Help Center Articles (8-10 articles):
+Your AI Agent (Part 1) uses Help Center articles as a content source for generative replies. Load sample articles so your AI Agent can demonstrate answering billing and scheduling questions from KB content.
+Billing FAQ (3-4 articles) — Cover topics such as: understanding your bill, payment methods accepted, setting up autopay, disputing a charge, insurance co-pay explanations, payment plan options, and receipt requests.
+Appointment Scheduling Policies (2 articles) — Cover topics such as: how to schedule a new appointment, cancellation policy and timeframes, rescheduling procedures, no-show policy, and telehealth appointment instructions.
+Clinical Device Troubleshooting (2 articles) — Cover topics such as: glucose monitor pairing instructions, blood pressure cuff error codes, device battery replacement, syncing device data to your patient portal, and when to contact support vs. your provider.
+Insurance Verification (1-2 articles) — Cover topics such as: verifying your coverage before an appointment, updating insurance information on file, and understanding pre-authorization requirements.
+Article structure tips:
+Keep each article focused on a single topic — do not combine multiple procedures into one article.
+Use clear, descriptive titles that match how a patient would phrase their question (e.g., "How do I reschedule my appointment?" rather than "Scheduling Policy v2.1").
+Structure content with headers and bullet points for easy scanning.
+Mark clinical device articles with appropriate labels to distinguish them from general self-service content.
+Custom Ticket Fields:
+Create a text field called "Patient ID" in Admin Center > Objects and rules > Tickets > Fields.
+After creating the field, note your actual field ID (visible in the field's URL or settings). You will reference this as custom_field_12345 in your ZAF sidebar app — replace 12345 with your real field ID.
+Sample Tickets:
+Create 3-5 test tickets with different intents to use during your demo:
+A billing inquiry — e.g., "I was charged twice for my last visit"
+An appointment change — e.g., "I need to move my Thursday appointment to next week"
+A device issue — e.g., "My glucose monitor won't sync after the latest update"
+Populate the Patient ID field on each ticket with a value that matches your mock API data.
+The Scenario: NovaCare Health
+You are the FDE leading this deployment. Review the following scenario carefully — you will design and implement solutions based on this context, and discuss your decisions during the live interview.
+Company Background
+NovaCare Health is a mid-market healthcare SaaS platform that provides electronic health record (EHR) management, patient scheduling, billing, and clinical device support to 400+ healthcare facilities across the United States.
+Current State
+200 support agents across three channels: live chat (40%), email (45%), phone (15%)
+3 million patient interactions per year (~8,200/day average, peaks at 12,000+ during open enrollment)
+Epic EHR system as the source of truth for patient records, appointments, and billing — accessible via REST API (FHIR R4 compliant)
+5,000 Help Center articles covering billing procedures, appointment policies, clinical device troubleshooting, insurance verification, and patient onboarding — many are outdated, duplicated, or poorly structured
+Zendesk Suite Enterprise with AI Agents Advanced add-on and Copilot add-on purchased but not yet deployed
+Current automation: Basic triggers and macros only; no AI agents, no Action Flows, no Copilot configured
+CSAT: 72% (below industry benchmark of 80% for healthcare SaaS)
+First response time: 4.2 hours on email, 45 seconds on chat
+Desired State
+AI Agents handling tier-1 inquiries autonomously across chat and email: billing questions, appointment rescheduling, insurance verification
+Copilot Auto Assist configured for clinical support specialists handling sensitive medical device troubleshooting questions (human-in-the-loop required)
+Integration with Epic EHR for real-time patient data lookups (appointment data, billing status, insurance details)
+Action Flows automating multi-step workflows (appointment rescheduling, insurance verification, escalation routing)
+70% automation rate on tier-1 inquiries within 90 days
+Key Constraints
+HIPAA compliance — Protected Health Information (PHI) must be handled according to BAA requirements; no PHI in AI training data; audit logging required for all patient data access
+Patient safety — Clinical device questions MUST route to certified specialists; AI must never provide clinical guidance or device troubleshooting autonomously
+Epic EHR API — Rate-limited to 100 requests/second; requires OAuth 2.0 with SMART on FHIR authorization; patient data lookups require identity verification first
+Content quality — KB articles have not been audited in 18 months; estimated 30% are outdated, 15% are duplicates, and many lack proper categorization for AI retrieval
+Channel complexity — Chat requires real-time responses; email allows async but patients expect resolution within 24 hours; phone is handled by human agents only (no voice AI planned)
+Key Stakeholders
+Stakeholder
+Role
+Priority
+Dr. Sarah Chen
+VP of Patient Experience
+70% automation ASAP; board presentation in 30 days
+Marcus Williams
+Director of Clinical Support
+Patient safety; specialist workflows must not be disrupted
+Priya Patel
+IT Security Lead
+HIPAA compliance; audit trails; data minimization
+James Rodriguez
+Support Operations Manager
+Agent adoption; workflow efficiency; manageable rollout
+Part 1 — AI Agent Design
+Objective
+Configure AI Agents Advanced in your Zendesk sandbox to handle NovaCare Health's tier-1 patient inquiries across chat and email channels.
+Requirements
+Design and implement an intent taxonomy with 4 or more use cases organized by category:
+Appointment rescheduling — requires patient identity verification and EHR data lookup before any action
+Billing inquiries — answerable from Knowledge Base articles via generative replies
+Clinical device troubleshooting — must always escalate to a human specialist; the AI agent should never attempt to resolve these autonomously
+Insurance verification — requires an external API call to verify coverage status
+For each use case, configure the appropriate resolution method:
+Conversation flows for structured, multi-step interactions
+Generative replies for FAQ-style questions answerable from KB content
+Procedures with linked actions for workflows requiring external system calls
+Configure escalation and handoff rules that determine when the AI agent stops and routes to a human agent, including:
+Hard escalation rules (certain inquiry types always go to humans)
+Confidence-based escalation (AI defers when uncertain)
+Context transfer to the receiving agent (conversation summary, collected data, identified intent)
+Configure channel-specific behavior:
+Chat/messaging: real-time conversation flows, multi-turn interactions
+Email: generative replies with article links, multi-intent thread handling
+Deliverable
+A working AI Agent configuration in your sandbox with:
+4+ use cases with clear, non-overlapping intent descriptions
+Linked procedures for each use case specifying the resolution method
+Escalation rules with group routing for specialist teams
+Channel-specific behavior configured for both chat and email
+Guidance
+Start by mapping each inquiry type to the right resolution approach before you configure anything. Not every inquiry type should be handled the same way.
+Use case descriptions should be written in natural language that clearly distinguishes one intent from another — think about how a patient would phrase each type of request.
+Consider the healthcare context: patient data sensitivity affects what the AI agent can and cannot do before verifying identity.
+Think about what information transfers to a human agent during escalation — an agent picking up a conversation mid-flow needs context.
+Part 2 — Action Flow Configuration
+Objective
+Build the appointment rescheduling Action Flow in Action Builder that executes after the AI Agent identifies a patient's rescheduling intent and collects their patient ID.
+Requirements
+Create an Action Flow with the following steps:
+Trigger — Define what initiates the flow (e.g., AI agent procedure execution or ticket conditions being met with the correct intent tag and populated patient_id field)
+Identity Verification — Make an API call to your mock Epic EHR endpoint, passing patient_id and date of birth to verify identity
+Appointment Lookup — If identity is verified, make an API call to retrieve the patient's existing appointments
+Present Available Slots — Output available time slots back to the conversation for patient selection
+Confirm and Update — After patient selects a new slot, make an API call to update the appointment in the EHR
+Ticket Update — Update the Zendesk ticket with status changes, tags, and an internal note documenting the rescheduling
+Include conditional branches for:
+Identity verification pass/fail
+Appointment exists / does not exist
+Available slots found / fully booked
+API call success / failure (timeout, server error)
+Patient confirms / cancels mid-flow
+Include error handling:
+When the EHR API is unavailable, provide a patient-friendly message and escalate to a human agent
+When identity verification fails, route to human with appropriate context
+When a partial failure occurs (e.g., lookup succeeds but rescheduling fails), notify the patient and create a follow-up task
+Mock API Requirement
+You must create your own mock API endpoint that simulates the Epic EHR system for this exercise. This mock API will be called by your Action Flow. See the Mock API Guidance section for details on what your mock should support.
+Deliverable
+A working Action Flow in Action Builder with:
+A clear trigger configuration
+The complete happy path (identity verified → appointment found → slots available → reschedule confirmed)
+At least 3 error/branch paths with appropriate fallback behavior
+Connected to your mock API endpoint for EHR calls
+Guidance
+Map out the flow visually before building it — identify every decision point where the path could diverge.
+Think about what data each step needs from previous steps and how you pass variables between them.
+Error messages shown to patients should be helpful and actionable, not technical.
+Consider what information an agent needs if the flow escalates mid-way through — they should not have to ask the patient to repeat themselves.
+Part 3 — ZAF Sidebar App Development
+Objective
+Build a Zendesk Apps Framework (ZAF) sidebar app that displays patient appointment data from the Epic EHR system, giving agents quick access to relevant patient context while handling tickets.
+Starter Code
+Use the following as your starting point:
+// manifest.json location: ticket_sidebar// Framework: Zendesk Apps Framework (ZAF) v2(function () {  var client = ZAFClient.init();  client.on('app.registered', function () {    // TODO: Get the patient_id from the ticket's custom field    // TODO: Fetch appointment data from Epic EHR via the app's proxy    // TODO: Render appointments in the sidebar    // TODO: Add "Copy to Ticket" button that creates an internal note  });})();
+Requirements
+Read patient_id from the ticket's custom field using client.get('ticket.customField:custom_field_12345')
+Fetch appointment data from your mock EHR API using client.request() — this routes the call through the ZAF app proxy (defined in manifest.json) so that API credentials are never exposed in client-side code
+Display appointments in the sidebar in a readable format that agents can scan quickly during a conversation (date, time, provider, appointment type)
+"Add to Ticket" button that creates an internal note on the ticket with the appointment data using client.invoke()
+Handle error states:
+Patient_id field is empty (prompt agent to collect it)
+API call fails (show a user-friendly error with retry option)
+No appointments found (clear empty state message)
+Loading state while fetching data
+Mock API Requirement
+You must create your own mock API endpoint that returns sample patient appointment data. This is the same mock API (or an extension of it) you build for Part 2. See the Mock API Guidance section for details.
+Key ZAF API Reference
+Method
+Purpose
+Example
+client.get()
+Read ticket/user data
+client.get('ticket.customField:custom_field_12345')
+client.request()
+Make proxied external API calls (CORS-safe, credentials secured in manifest)
+client.request({ url: '/api/v2/...', type: 'GET' })
+client.invoke()
+Perform ticket actions
+client.invoke('ticket.comment.appendText', text)
+Deliverable
+A working ZAF sidebar app that you can run locally via zcli apps:server or deploy to your sandbox, demonstrating:
+Patient appointment data fetched and displayed
+"Add to Ticket" functionality creating an internal note
+Graceful handling of error and empty states
+Guidance
+The ZAF proxy pattern exists for security — external API calls go through the proxy defined in your manifest.json so credentials are never in client-side code. Use client.request(), not direct fetch().
+Think about the agent's workflow: they are mid-conversation with a patient and need information fast. Design the UI for quick scanning.
+Internal notes (not public replies) are the appropriate place for patient health data on a ticket.
+Consider what happens when the custom field has no value yet — the agent may need to collect the patient ID before the app can fetch data.
+Mock API Guidance
+Both Part 2 (Action Flow) and Part 3 (ZAF sidebar app) require calling an external API that simulates NovaCare's Epic EHR system. You are responsible for creating this mock API as part of the exercise.
+Technology Choice
+You may use any tool or framework to create your mock API:
+Full frameworks: Express.js, Flask, FastAPI, Hono
+Serverless: AWS Lambda, Cloudflare Workers, Vercel serverless functions
+Mock services: Mockoon, Beeceptor, Mocky.io, or any hosted mock API service
+Any other approach that provides accessible HTTP endpoints
+There is no preferred choice — pick whatever lets you move quickly and produce clean, readable code.
+Required Endpoints
+Your mock API must implement the following:
+Method
+Endpoint
+Purpose
+POST
+/verify-identity
+Accepts patient_id and date_of_birth. Returns { "verified": true } or { "verified": false }.
+GET
+/patients/:id/appointments
+Returns a list of upcoming appointments (date, time, provider, location).
+GET
+/appointments/available-slots
+Accepts query parameters for a date range. Returns available rescheduling slots.
+PUT
+/appointments/:id
+Accepts a new date/time. Reschedules the appointment and returns confirmation.
+Minimum Mock Data
+Seed your mock API with at least:
+2-3 sample patients — each with a unique patient ID and date of birth for identity verification
+2-4 upcoming appointments per patient — with varied providers, dates, and locations
+5-10 available time slots — spread across the next two weeks for rescheduling scenarios
+Sample Data Structure
+Your mock data might look something like:
+{  "patients": [    {      "patient_id": "PAT-001",      "dob": "1985-03-15",      "name": "Jane Smith",      "appointments": [        {          "appointment_id": "APT-101",          "date": "2026-06-15",          "time": "10:00 AM",          "provider": "Dr. Williams",          "type": "Follow-up",          "location": "Main Campus - Room 204",          "status": "confirmed"        }      ]    }  ]}
+Accessibility
+Your mock API must be accessible from your Zendesk instance during the interview:
+If you use a hosted service (Beeceptor, serverless functions, etc.), it will be publicly accessible by default.
+If you run your mock locally, use a tunneling tool like ngrok, Cloudflare Tunnel, or localtunnel to expose it to the internet.
+Verify the connection works by testing an Action Flow call or ZAF app request from your Zendesk instance before interview day.
+Why This Matters
+Creating the mock API is not busywork — it demonstrates how you think about integration design. The structure of your mock data, error responses, and endpoint design reflects how you would approach a real integration with an EHR system. Consider:
+What does a realistic error response look like? (HTTP status codes, error messages)
+How would rate limiting or authentication work in production?
+What data fields would a real EHR return versus what your app actually needs?
+Your mock API should serve both your Action Flow (Part 2) and your ZAF app (Part 3). A single mock service that handles both is ideal.
+Timeline & Submission
+You will receive this exercise 3 business days before your scheduled interview date.
+There is no fixed hour limit. Work at your own pace to produce your best implementation. Some candidates spend a few focused sessions; others spread the work across several days. Do what works for you.
+Your implementation must be live and running in your Zendesk instance on interview day. You will demo it in real time — pre-recorded walkthroughs or screenshots are not a substitute.
+You do not need to submit any written documentation, code repositories, or deliverables ahead of time. The interview itself is your presentation.
+Focus on working implementations over perfect documentation. A functioning demo with rough edges is more valuable than polished slides describing something that does not run.
+Interview Day: What to Expect
+Your live interview will last approximately 60 minutes and is divided into two parts.
+Part A — Implementation Review (40 minutes)
+You will share your screen and walk the interviewer through your live Zendesk implementation. Expect to cover:
+AI Agent Configuration — Demo your use cases, procedures, and escalation rules. Show how the AI Agent handles a sample end-user conversation and when it decides to escalate.
+Action Flow in Action Builder — Open your Action Flow, walk through the design, and explain the decisions you made about flow structure, error handling, and data mapping.
+ZAF Sidebar App — Open a test ticket with a populated Patient ID field and demo your sidebar app pulling data from your mock API.
+Mock API Design — Explain your endpoint structure, the mock data you created, and how you chose to simulate the EHR integration.
+Follow-up Discussion — The interviewer will ask questions about trade-offs you made, alternative approaches you considered, and how you would handle production-scale concerns (e.g., error recovery, rate limiting, data privacy).
+You are encouraged to narrate your thinking as you demo. Explain why you made certain choices, not just what you built.
+Part B — Consulting Scenario (20 minutes)
+This is a live exercise where you will navigate a challenging stakeholder conversation related to the NovaCare deployment. The interviewer will play the role of a customer stakeholder.
+No additional preparation is needed beyond understanding the scenario context and the stakeholder priorities described above.
+You will receive the specific scenario prompt at the start of this section.
+Focus on active listening, asking clarifying questions, and providing thoughtful recommendations grounded in platform capabilities.
+What You Can Use During the Interview
+Your Zendesk Admin Center (open in your browser)
+Your IDE with your ZAF app and mock API code
+Any personal notes you prepared
+This exercise document
+Tips for Success
+Prioritize working implementations. A functional demo that handles the happy path plus a few error cases is better than an ambitious design that doesn't run.
+Be prepared to explain WHY. Every configuration choice, flow branch, and code decision should have a reason behind it. "I chose X because of constraint Y" is more valuable than "I followed the documentation."
+Think about the healthcare context. Data sensitivity, patient safety, and compliance are not afterthoughts — they should influence your design decisions throughout.
+Test your integrations end-to-end. Before interview day, verify that your Action Flow successfully calls your mock API, your ZAF app loads data, and your AI Agent handles test conversations appropriately.
+Consider edge cases. What happens when data is missing? When an API is slow? When a patient provides incorrect information? Your error handling tells us how you think about production systems.
+Keep your mock API running. Ensure your mock endpoints are accessible during the interview — test the connection the morning of.
+Treat this as a real customer deployment. The best implementations reflect how you would actually deliver this for NovaCare Health — thoughtful, production-minded, and aware of the constraints.
+If you have questions about the exercise requirements or encounter technical issues with sandbox access, contact your recruiting coordinator.
+
