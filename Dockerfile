@@ -1,14 +1,21 @@
 FROM python:3.10-slim
 
-WORKDIR /code
+# Create a non-root user for security compliance
+RUN useradd -m -u 1000 user
+USER user
+ENV PATH="/home/user/.local/bin:${PATH}"
 
-COPY ./requirements.txt /code/requirements.txt
+WORKDIR /app
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+# Copy and install requirements
+COPY --chown=user:user requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-COPY . .
+# Copy application files
+COPY --chown=user:user . /app
 
-# Expose port 8000 for Koyeb/Railway (Change to 7860 if using Hugging Face)
+# Expose the mandatory Hugging Face port
 EXPOSE 7860
 
+# Bind to 0.0.0.0 and listen on 7860
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
