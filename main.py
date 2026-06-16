@@ -72,23 +72,6 @@ async def voice_demo():
         return FileResponse(voice_file, media_type="text/html")
     return {"error": "Voice demo not found"}
 
-# Explicit routes for static files (Vercel compatibility)
-@app.get("/static/dashboard.js")
-async def get_dashboard_js():
-    """Serve dashboard JavaScript."""
-    js_file = static_path / "dashboard.js"
-    if js_file.exists():
-        return FileResponse(js_file, media_type="application/javascript")
-    return {"error": "File not found"}
-
-@app.get("/static/dashboard.css")
-async def get_dashboard_css():
-    """Serve dashboard CSS."""
-    css_file = static_path / "dashboard.css"
-    if css_file.exists():
-        return FileResponse(css_file, media_type="text/css")
-    return {"error": "File not found"}
-
 # Register routers
 app.include_router(health_router)
 app.include_router(identity_router)
