@@ -24,25 +24,24 @@ novacare_demo/
 │   ├── identity.py      # Identity verification
 │   ├── appointments.py  # Appointment management
 │   └── admin.py         # Admin & testing endpoints
-└── data/                 # Data management
+├── data/                 # Data management
     ├── __init__.py
-    ├── data_manager.py   # Excel data operations
-    └── novacare_data.xlsx  # Excel with 'default' & 'working' sheets
-
+    └── data_manager.py   # In-memory data operations (Vercel-compatible)
 ```
 
 ## Key Features
 
-### 1. Excel-Based Data Storage
-- **Default Sheet**: Contains original seed data (never modified)
-- **Working Sheet**: Demo data that can be modified during demos
-- **Data Refresh**: `/data/refresh` endpoint resets working data from default
+### 1. In-Memory Data Storage (Vercel-Compatible)
+- **Default Data**: Stored in memory as the source of truth
+- **Working Data**: Active copy in memory that can be modified during demos
+- **Data Refresh**: `/data/refresh` endpoint resets working data from default copy
+- **No File I/O**: Optimized for Vercel's read-only serverless environment
 
 ### 2. Data Flow
-1. **Startup**: Application loads data from 'working' sheet into memory
-2. **Runtime**: All operations work with in-memory data
-3. **Modifications**: Changes are automatically saved back to 'working' sheet
-4. **Reset**: Call `/data/refresh` to restore working data from default
+1. **Startup**: Application loads default data into memory as working copy
+2. **Runtime**: All operations work with in-memory data (fast and ephemeral per instance)
+3. **Modifications**: Changes persist in memory during the serverless function lifecycle
+4. **Reset**: Call `/data/refresh` to restore working data from default copy
 
 ### 3. API Endpoints
 
@@ -96,10 +95,13 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 1. **Initial State**: Server starts and loads working data
 2. **During Demo**: Make API calls that modify data (e.g., reschedule appointments)
-3. **Reset for Next Demo**: Call `POST /data/refresh` to restore default state
-4. **Verify Reset**: Check `/healthz` to see current data statistics
+3. **Reset for Next Demo**: Call `POST /data/rdefault data into memory
+2. **During Demo**: Make API calls that modify data (e.g., reschedule appointments)
+3. **Data Persistence**: Changes remain in memory for the lifecycle of the serverless instance
+4. **Reset for Next Demo**: Call `POST /data/refresh` to restore default state
+5. **Verify Reset**: Check `/healthz` to see current data statistics
 
-## Development
+**Note**: On Vercel, each serverless invocation may get a fresh instance, so data resets automatically between cold starts. Use `/data/refresh` for manual resets during active sessions.
 
 ### Adding New Endpoints
 1. Create route handler in appropriate file under `routes/`
