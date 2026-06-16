@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ],
+  "env": {
+    "MOCK_API_TOKEN": "dcJuI3Tx+VQq9IfCJ7egXiGcDj2uof8xqNqemktrp5c="
+  }
+}
