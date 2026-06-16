@@ -1,9 +1,30 @@
 // Configuration
 const API_BASE_URL = window.location.origin;
-const API_TOKEN = 'dev-token-replace-in-production'; // Use environment variable in production
+let API_TOKEN = null; // Will be fetched from backend
 const REFRESH_INTERVAL = 10000; // 10 seconds
 
 let refreshTimer = null;
+
+// Fetch configuration from backend (including API token from environment)
+async function loadConfig() {
+    try {
+        console.log('Loading configuration from backend...');
+        const response = await fetch(`${API_BASE_URL}/api/config`);
+        if (!response.ok) {
+            throw new Error(`Failed to load config: ${response.status}`);
+        }
+        const config = await response.json();
+        API_TOKEN = config.apiToken;
+        console.log('Configuration loaded successfully. API token retrieved from environment.');
+        return config;
+    } catch (error) {
+        console.error('Failed to load configuration:', error);
+        // Fallback to a default token for development
+        API_TOKEN = 'dev-token-replace-in-production';
+        console.warn('Using fallback API token. Check backend /api/config endpoint.');
+        throw error;
+    }
+}
 
 // Utility Functions
 function formatDate(dateStr) {
@@ -37,6 +58,11 @@ function showToast(message, type = 'success') {
 
 // API Functions
 async function apiCall(endpoint, method = 'GET', body = null) {
+    // Ensure API token is loaded
+    if (!API_TOKEN) {
+        throw new Error('API token not loaded. Configuration must be fetched first.');
+    }
+    
     const options = {
         method,
         headers: {
@@ -118,11 +144,6 @@ async function loadPatients() {
         document.getElementById('patients-container').innerHTML = 
             '<div class="loading">Failed to load patients. Check console for details.</div>';
     }
-}
-            </div>
-            <div class="patient-badge">${appointmentResults[index].length} appointments</div>
-        </div>
-    `).join('');
 }
 
 async function loadAppointments() {
@@ -296,9 +317,24 @@ function stopAutoRefresh() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Dashboard initializing...');
-    await refreshData();
-    startAutoRefresh();
-    console.log('Dashboard initialized. Auto-refresh enabled.');
+    
+    try {
+        // Load configuration first (including API token from environment)
+        await loadConfig();
+        console.log('✓ Configuration loaded');
+        
+        // Now load dashboard data with the API token
+        await refreshData();
+        console.log('✓ Initial data loaded');
+        
+        // Start auto-refresh
+        startAutoRefresh();
+        console.log('✓ Dashboard initialized. Auto-refresh enabled.');
+    } catch (error) {
+        console.error('Dashboard initialization failed:', error);
+        document.getElementById('system-status').textContent = 'System Error';
+        document.getElementById('system-status').style.color = '#ef4444';
+    }
 });
 
 // Stop auto-refresh when page is hidden

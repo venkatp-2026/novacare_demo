@@ -238,12 +238,29 @@
 
     <div id="toast" class="toast"></div>
 
-    <script src="dashboard.js"></script>
     <script>
         let recognition;
         let isListening = false;
-        const API_TOKEN = 'dev-token-replace-in-production';
+        let API_TOKEN = null; // Will be fetched from backend
         const API_BASE = window.location.origin;
+        
+        // Fetch API token from backend
+        async function loadConfig() {
+            try {
+                const response = await fetch(`${API_BASE}/api/config`);
+                if (!response.ok) {
+                    throw new Error(`Failed to load config: ${response.status}`);
+                }
+                const config = await response.json();
+                API_TOKEN = config.apiToken;
+                console.log('✓ API token loaded from environment');
+                return config;
+            } catch (error) {
+                console.error('Failed to load configuration:', error);
+                API_TOKEN = 'dev-token-replace-in-production';
+                console.warn('Using fallback API token');
+            }
+        }
         
         // Initialize Speech Recognition
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -396,6 +413,13 @@
             
             synthesis.speak(utterance);
         }
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('Voice demo initializing...');
+            await loadConfig();
+            console.log('✓ Voice demo ready');
+        });
     </script>
 </body>
 </html>

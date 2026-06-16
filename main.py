@@ -5,11 +5,12 @@ Features Excel-based data storage with default and working copies for demo reset
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from config import API_TITLE, API_DESCRIPTION, API_VERSION, ALLOWED_ORIGINS
+from config import API_TITLE, API_DESCRIPTION, API_VERSION, ALLOWED_ORIGINS, MOCK_API_TOKEN
 from data import load_data_on_startup
 from routes import (
     health_router,
@@ -48,42 +49,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Static file path
-static_path = Path(__file__).parent / "static"
-
-# Static file routes
-@app.get("/")
-async def root():
-    """Root redirects to dashboard."""
-    return FileResponse(static_path / "dashboard.html", media_type="text/html")
-
-@app.get("/dashboard")
-async def dashboard():
-    """Serve dashboard."""
-    return FileResponse(static_path / "dashboard.html", media_type="text/html")
-
-@app.get("/dashboard.html")
-async def dashboard_html():
-    """Serve dashboard."""
-    return FileResponse(static_path / "dashboard.html", media_type="text/html")
-
-@app.get("/dashboard.js")
-async def dashboard_js():
-    """Serve dashboard JS."""
-    return FileResponse(static_path / "dashboard.js", media_type="application/javascript")
-
-@app.get("/dashboard.css")
-async def dashboard_css():
-    """Serve dashboard CSS."""
-    return FileResponse(static_path / "dashboard.css", media_type="text/css")
-
-@app.get("/voice")
-async def voice():
-    """Serve voice demo."""
-    return FileResponse(static_path / "voice-demo.html", media_type="text/html")
+# Configuration endpoint - serves API token to frontend
+@app.get("/api/config")
+async def get_config():
+    """
+    Provide frontend configuration including API token.
+    This endpoint is public as it's needed for client authentication.
+    """
+    return JSONResponse({
+        "apiToken": MOCK_API_TOKEN,
+        "apiBaseUrl": "/v1",
+        "environment": "production"
+    })
 
 # Register routers
 app.include_router(health_router)
 app.include_router(identity_router)
 app.include_router(appointments_router)
 app.include_router(admin_router)
+
+# Mount static files (must be last so API routes take precedence)
+static_path = Path(__file__).parent / "static"
+app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
