@@ -1,51 +1,26 @@
-"""Data manager for handling Excel-based data storage with default and working copies."""
+"""Data manager for handling in-memory data storage with default and working copies."""
 import os
 import json
+import copy
 from pathlib import Path
 from typing import Dict, List, Any, Optional
-import openpyxl
-from openpyxl import Workbook
-from openpyxl.utils import get_column_letter
 
 
 class DataManager:
-    """Manages data storage with default and working copies in Excel."""
+    """Manages data storage with default and working copies in memory (Vercel-compatible)."""
     
     def __init__(self, excel_file: str = "data/novacare_data.xlsx"):
         self.excel_file = Path(excel_file)
         self.patients: Dict[str, Dict[str, Any]] = {}
         self.appointments: Dict[str, List[Dict[str, Any]]] = {}
         self.slots: Dict[str, Dict[str, Any]] = {}
+        self._default_data: Optional[Dict[str, Any]] = None
         
-    def initialize_excel_with_defaults(self) -> None:
-        """Create Excel file with default data if it doesn't exist."""
-        if self.excel_file.exists():
-            return
-        
-        # Ensure directory exists
-        self.excel_file.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Create workbook with two sheets
-        wb = Workbook()
-        
-        # Remove default sheet
-        if 'Sheet' in wb.sheetnames:
-            wb.remove(wb['Sheet'])
-        
-        # Create default and working sheets
-        default_sheet = wb.create_sheet('default')
-        working_sheet = wb.create_sheet('working')
-        
-        # Initialize default data
-        default_data = self._get_default_data()
-        
-        # Write to both sheets
-        for sheet in [default_sheet, working_sheet]:
-            self._write_data_to_sheet(sheet, default_data)
-        
-        # Save workbook
-        wb.save(self.excel_file)
-        print(f"Created Excel file: {self.excel_file}")
+    def initialize_with_defaults(self) -> None:
+        """Initialize in-memory data storage with defaults (no file I/O)."""
+        # Store default data for resets
+        self._default_data = self._get_default_data()
+        print(f"Initialized in-memory data storage")
     
     def _get_default_data(self) -> Dict[str, Any]:
         """Get the default seed data."""
@@ -165,113 +140,30 @@ class DataManager:
             }
         }
     
-    def _write_data_to_sheet(self, sheet, data: Dict[str, Any]) -> None:
-        """Write structured data to a sheet as JSON."""
-        sheet['A1'] = 'Data Type'
-        sheet['B1'] = 'JSON Data'
-        
-        row = 2
-        for key, value in data.items():
-            sheet[f'A{row}'] = key
-            sheet[f'B{row}'] = json.dumps(value, ensure_ascii=False)
-            row += 1
-        
-        # Adjust column widths
-        sheet.column_dimensions['A'].width = 20
-        sheet.column_dimensions['B'].width = 100
-    
-    def _read_data_from_sheet(self, sheet) -> Dict[str, Any]:
-        """Read structured data from a sheet."""
-        data = {}
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-            if row[0] and row[1]:
-                data_type = row[0]
-                json_data = row[1]
-                try:
-                    data[data_type] = json.loads(json_data)
-                except json.JSONDecodeError:
-                    print(f"Warning: Could not parse JSON for {data_type}")
-        return data
-    
     def load_from_working_copy(self) -> None:
-        """Load data from working sheet into memory."""
-        if not self.excel_file.exists():
-            self.initialize_excel_with_defaults()
+        """Load data from default into memory (in-memory only, no file I/O)."""
+        if self._default_data is None:
+            self.initialize_with_defaults()
         
-        wb = openpyxl.load_workbook(self.excel_file)
+        # Deep copy from default data
+        self.patients = copy.deepcopy(self._default_data.get('patients', {}))
+        self.appointments = copy.deepcopy(self._default_data.get('appointments', {}))
+        self.slots = copy.deepcopy(self._default_data.get('slots', {}))
         
-        if 'working' not in wb.sheetnames:
-            raise ValueError("Working sheet not found in Excel file")
-        
-        working_sheet = wb['working']
-        data = self._read_data_from_sheet(working_sheet)
-        
-        self.patients = data.get('patients', {})
-        self.appointments = data.get('appointments', {})
-        self.slots = data.get('slots', {})
-        
-        wb.close()
-        print(f"Loaded data from working sheet: {len(self.patients)} patients, "
+        print(f"Loaded data into memory: {len(self.patients)} patients, "
               f"{sum(len(appts) for appts in self.appointments.values())} appointments, "
               f"{len(self.slots)} slots")
     
     def save_to_working_copy(self) -> None:
-        """Save current in-memory data to working sheet."""
-        if not self.excel_file.exists():
-            self.initialize_excel_with_defaults()
-        
-        wb = openpyxl.load_workbook(self.excel_file)
-        
-        if 'working' not in wb.sheetnames:
-            raise ValueError("Working sheet not found in Excel file")
-        
-        working_sheet = wb['working']
-        
-        # Clear existing data
-        for row in working_sheet.iter_rows(min_row=2):
-            for cell in row:
-                cell.value = None
-        
-        # Write current data
-        data = {
-            'patients': self.patients,
-            'appointments': self.appointments,
-            'slots': self.slots
-        }
-        self._write_data_to_sheet(working_sheet, data)
-        
-        wb.save(self.excel_file)
-        wb.close()
-        print("Saved data to working sheet")
+        """No-op for Vercel (in-memory only, no file I/O)."""
+        print("Data persisted in memory (Vercel serverless mode)")
     
     def refresh_from_default(self) -> None:
-        """Reset working data from default sheet."""
-        if not self.excel_file.exists():
-            self.initialize_excel_with_defaults()
+        """Reset working data from default copy (in-memory)."""
+        if self._default_data is None:
+            self.initialize_with_defaults()
         
-        wb = openpyxl.load_workbook(self.excel_file)
-        
-        if 'default' not in wb.sheetnames or 'working' not in wb.sheetnames:
-            raise ValueError("Required sheets not found in Excel file")
-        
-        default_sheet = wb['default']
-        working_sheet = wb['working']
-        
-        # Read from default
-        data = self._read_data_from_sheet(default_sheet)
-        
-        # Clear working sheet
-        for row in working_sheet.iter_rows(min_row=2):
-            for cell in row:
-                cell.value = None
-        
-        # Write to working
-        self._write_data_to_sheet(working_sheet, data)
-        
-        wb.save(self.excel_file)
-        wb.close()
-        
-        # Reload into memory
+        # Reload from default
         self.load_from_working_copy()
         print("Refreshed working data from default")
 
@@ -291,7 +183,7 @@ def get_data_manager() -> DataManager:
 def load_data_on_startup() -> None:
     """Initialize and load data on application startup."""
     dm = get_data_manager()
-    dm.initialize_excel_with_defaults()
+    dm.initialize_with_defaults()
     dm.load_from_working_copy()
 
 
