@@ -290,7 +290,7 @@ async function resetData() {
     }
     
     try {
-        await apiCall('/data/refresh', 'POST');
+        await apiCall('/v1/data/refresh', 'POST');
         showToast('Data reset successfully! Refreshing dashboard...', 'success');
         setTimeout(refreshData, 1000);
     } catch (error) {
