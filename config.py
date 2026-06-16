@@ -12,7 +12,13 @@ MOCK_API_TOKEN = os.environ.get("MOCK_API_TOKEN", "dev-token-replace-in-producti
 # CORS Configuration
 ALLOWED_ORIGINS = [
     "https://*.zendesk.com",
-    "http://localhost:*",  # For local zcli development
+    "http://localhost",
+    "http://localhost:8000",
+    "http://localhost:3000",
+    "http://127.0.0.1",
+    "http://127.0.0.1:8000",
+    "https://novacare-demo.vercel.app",
+    "https://novacare-demo-*.vercel.app",  # Preview deployments
 ]
 
 # Data Configuration

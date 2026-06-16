@@ -40,10 +40,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration - allow Zendesk domains only
+# CORS configuration - allow all origins for demo purposes
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"],  # Allow all origins for demo (restrict in production)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -41,7 +41,8 @@ async function apiCall(endpoint, method = 'GET', body = null) {
         method,
         headers: {
             'Authorization': `Bearer ${API_TOKEN}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         }
     };
     
@@ -50,13 +51,18 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     }
     
     try {
+        console.log(`Making API call to: ${API_BASE_URL}${endpoint}`);
         const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        console.log(`Response status: ${response.status}`);
+        
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`API Error: ${response.status} - ${errorText}`);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         return await response.json();
     } catch (error) {
-        console.error('API call failed:', error);
+        console.error(`API call failed for ${endpoint}:`, error);
         throw error;
     }
 }
@@ -77,27 +83,42 @@ async function loadHealthData() {
 }
 
 async function loadPatients() {
-    // Since we don't have a direct patients endpoint, we'll simulate from known patients
-    const patients = [
-        { id: 'PAT-001', name: 'Jane Smith', dob: '1985-03-15', mrn: 'MRN-2001' },
-        { id: 'PAT-002', name: 'Robert Johnson', dob: '1978-11-22', mrn: 'MRN-2002' },
-        { id: 'PAT-003', name: 'Maria Garcia', dob: '1992-07-08', mrn: 'MRN-2003' }
-    ];
-    
-    const container = document.getElementById('patients-container');
-    document.getElementById('patient-count').textContent = patients.length;
-    
-    // Get appointment counts for each patient
-    const appointmentPromises = patients.map(p => 
-        apiCall(`/v1/patients/${p.id}/appointments`).catch(() => [])
-    );
-    const appointmentResults = await Promise.all(appointmentPromises);
-    
-    container.innerHTML = patients.map((patient, index) => `
-        <div class="patient-item">
-            <div class="patient-info">
-                <h3>${patient.name}</h3>
-                <p>ID: ${patient.id} • MRN: ${patient.mrn}</p>
+    try {
+        // Since we don't have a direct patients endpoint, we'll simulate from known patients
+        const patients = [
+            { id: 'PAT-001', name: 'Jane Smith', dob: '1985-03-15', mrn: 'MRN-2001' },
+            { id: 'PAT-002', name: 'Robert Johnson', dob: '1978-11-22', mrn: 'MRN-2002' },
+            { id: 'PAT-003', name: 'Maria Garcia', dob: '1992-07-08', mrn: 'MRN-2003' }
+        ];
+        
+        const container = document.getElementById('patients-container');
+        document.getElementById('patient-count').textContent = patients.length;
+        
+        // Get appointment counts for each patient
+        const appointmentPromises = patients.map(p => 
+            apiCall(`/v1/patients/${p.id}/appointments`)
+                .catch(err => {
+                    console.error(`Failed to load appointments for ${p.id}:`, err);
+                    return [];
+                })
+        );
+        const appointmentResults = await Promise.all(appointmentPromises);
+        
+        container.innerHTML = patients.map((patient, index) => `
+            <div class="patient-item">
+                <div class="patient-info">
+                    <h3>${patient.name}</h3>
+                    <p>ID: ${patient.id} • MRN: ${patient.mrn}</p>
+                </div>
+                <div class="patient-badge">${appointmentResults[index].length} appointments</div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Failed to load patients:', error);
+        document.getElementById('patients-container').innerHTML = 
+            '<div class="loading">Failed to load patients. Check console for details.</div>';
+    }
+}
             </div>
             <div class="patient-badge">${appointmentResults[index].length} appointments</div>
         </div>
