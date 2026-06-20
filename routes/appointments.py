@@ -42,38 +42,78 @@ def get_patient_appointments(
 def get_available_slots(
     from_date: Optional[str] = Query(None, description="Start date filter (YYYY-MM-DD)"),
     to_date: Optional[str] = Query(None, description="End date filter (YYYY-MM-DD)"),
+    time_of_day: Optional[str] = Query(None, description="Filter by time of day: morning (6am-12pm), afternoon (12pm-5pm), evening (5pm-9pm)"),
     provider: Optional[str] = Query(None, description="Filter by provider name"),
     token: str = Depends(verify_token)
 ):
     """
     Retrieve available appointment slots.
-    Optionally filter by date range and provider.
+    Optionally filter by date range, time of day, and provider.
+
+    Time of day options:
+    - morning: 6:00 AM - 12:00 PM
+    - afternoon: 12:00 PM - 5:00 PM
+    - evening: 5:00 PM - 9:00 PM
     """
     dm = get_data_manager()
-    
+
     # Log the request
     log_event(
         event="slots_queried",
         endpoint="/v1/appointments/available-slots",
-        filters={"from": from_date, "to": to_date, "provider": provider}
+        filters={"from": from_date, "to": to_date, "time_of_day": time_of_day, "provider": provider}
     )
-    
+
     # Filter available slots
     slots = [slot for slot in dm.slots.values() if slot["available"]]
-    
+
     # Apply date filters if provided
     if from_date:
         slots = [s for s in slots if s["date"] >= from_date]
     if to_date:
         slots = [s for s in slots if s["date"] <= to_date]
-    
+
+    # Apply time of day filter if provided
+    if time_of_day:
+        def matches_time_of_day(slot_time: str, period: str) -> bool:
+            """Check if slot time matches the requested time of day period."""
+            # Parse time like "2:00 PM" or "9:30 AM"
+            time_str = slot_time.strip().upper()
+
+            # Extract hour
+            try:
+                time_part = time_str.split(':')[0]
+                hour = int(time_part)
+
+                # Adjust for PM (except 12 PM)
+                if 'PM' in time_str and hour != 12:
+                    hour += 12
+                # Adjust for 12 AM (midnight)
+                elif 'AM' in time_str and hour == 12:
+                    hour = 0
+
+                # Check against time periods
+                if period.lower() == 'morning':
+                    return 6 <= hour < 12
+                elif period.lower() == 'afternoon':
+                    return 12 <= hour < 17  # 12pm - 5pm
+                elif period.lower() == 'evening':
+                    return 17 <= hour < 21  # 5pm - 9pm
+                else:
+                    return True  # Unknown period, include all
+
+            except (ValueError, IndexError):
+                return True  # Can't parse, include by default
+
+        slots = [s for s in slots if matches_time_of_day(s["time"], time_of_day)]
+
     # Apply provider filter if provided
     if provider:
         slots = [s for s in slots if provider.lower() in s["provider"].lower()]
-    
+
     # Sort by date and time
     slots.sort(key=lambda x: (x["date"], x["time"]))
-    
+
     return slots
 
 
