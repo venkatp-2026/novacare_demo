@@ -30,21 +30,55 @@ class DataManager:
                     "patient_id": "PAT-001",
                     "name": "Jane Smith",
                     "dob": "1985-03-15",
+                    "email": "jane.smith@email.com",
+                    "phone": "(555) 123-4567",
                     "mrn": "MRN-2001",
+                    "insurance_member_id": "INS-123456",
+                    "insurance_plan": "Blue Cross PPO",
                     "status": "active"
                 },
                 "PAT-002": {
                     "patient_id": "PAT-002",
                     "name": "Robert Johnson",
                     "dob": "1978-11-22",
+                    "email": "robert.johnson@email.com",
+                    "phone": "(555) 234-5678",
                     "mrn": "MRN-2002",
+                    "insurance_member_id": "INS-234567",
+                    "insurance_plan": "Aetna HMO",
                     "status": "active"
                 },
                 "PAT-003": {
                     "patient_id": "PAT-003",
                     "name": "Maria Garcia",
                     "dob": "1992-07-08",
+                    "email": "maria.garcia@email.com",
+                    "phone": "(555) 345-6789",
                     "mrn": "MRN-2003",
+                    "insurance_member_id": "INS-345678",
+                    "insurance_plan": "Cigna PPO",
+                    "status": "active"
+                },
+                "PAT-004": {
+                    "patient_id": "PAT-004",
+                    "name": "John Smith",
+                    "dob": "1990-05-12",
+                    "email": "john.smith.1990@email.com",
+                    "phone": "(555) 456-7890",
+                    "mrn": "MRN-2004",
+                    "insurance_member_id": "INS-456789",
+                    "insurance_plan": "United Healthcare",
+                    "status": "active"
+                },
+                "PAT-005": {
+                    "patient_id": "PAT-005",
+                    "name": "John Smith",
+                    "dob": "1990-05-12",
+                    "email": "john.smith.alt@email.com",
+                    "phone": "(555) 567-8901",
+                    "mrn": "MRN-2005",
+                    "insurance_member_id": "INS-567890",
+                    "insurance_plan": "Kaiser Permanente",
                     "status": "active"
                 },
             },
@@ -122,6 +156,30 @@ class DataManager:
                         "provider": "Dr. Kim",
                         "type": "Nutrition Counseling",
                         "location": "Wellness Center - Suite 210",
+                        "status": "confirmed"
+                    }
+                ],
+                "PAT-004": [
+                    {
+                        "appointment_id": "APT-401",
+                        "patient_id": "PAT-004",
+                        "date": "2026-06-28",
+                        "time": "9:00 AM",
+                        "provider": "Dr. Brown",
+                        "type": "Annual Physical",
+                        "location": "Main Campus - Room 105",
+                        "status": "confirmed"
+                    }
+                ],
+                "PAT-005": [
+                    {
+                        "appointment_id": "APT-501",
+                        "patient_id": "PAT-005",
+                        "date": "2026-07-12",
+                        "time": "2:00 PM",
+                        "provider": "Dr. Martinez",
+                        "type": "Cardiology Follow-up",
+                        "location": "Heart Center - Room 3",
                         "status": "confirmed"
                     }
                 ]

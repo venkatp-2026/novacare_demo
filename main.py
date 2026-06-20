@@ -16,7 +16,10 @@ from routes import (
     health_router,
     identity_router,
     appointments_router,
-    admin_router
+    admin_router,
+    patients_router,
+    insurance_router,
+    appointment_confirmation_router
 )
 
 
@@ -67,6 +70,9 @@ app.include_router(health_router)
 app.include_router(identity_router)
 app.include_router(appointments_router)
 app.include_router(admin_router)
+app.include_router(patients_router)
+app.include_router(insurance_router)
+app.include_router(appointment_confirmation_router)
 
 # Mount static files (must be last so API routes take precedence)
 static_path = Path(__file__).parent / "static"
