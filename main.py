@@ -33,15 +33,53 @@ async def lifespan(app: FastAPI):
     print("Shutting down...")
 
 
-# Initialize FastAPI with metadata for Swagger UI
+# Initialize FastAPI with metadata for Swagger UI and Bearer token authentication
 app = FastAPI(
     title=API_TITLE,
     description=API_DESCRIPTION,
     version=API_VERSION,
     docs_url="/docs",
     redoc_url="/redoc",
-    lifespan=lifespan
+    lifespan=lifespan,
+    swagger_ui_parameters={
+        "persistAuthorization": True  # Remember auth token across page refreshes
+    }
 )
+
+# Add security scheme for Swagger UI "Authorize" button
+from fastapi.openapi.utils import get_openapi
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+
+    openapi_schema = get_openapi(
+        title=API_TITLE,
+        version=API_VERSION,
+        description=API_DESCRIPTION,
+        routes=app.routes,
+    )
+
+    # Add Bearer token security scheme
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": f"Enter the bearer token: `{MOCK_API_TOKEN}`"
+        }
+    }
+
+    # Apply security globally to all endpoints (except /api/config and /health)
+    for path in openapi_schema["paths"]:
+        for method in openapi_schema["paths"][path]:
+            if path not in ["/api/config", "/health"]:
+                openapi_schema["paths"][path][method]["security"] = [{"BearerAuth": []}]
+
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 # CORS configuration - allow all origins for demo purposes
 app.add_middleware(
