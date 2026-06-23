@@ -4,7 +4,9 @@ from typing import List, Optional
 from models import Appointment, AppointmentSlot, RescheduleRequest, RescheduleResponse
 from utils import verify_token, log_event
 from data import get_data_manager, save_working_data
+import logging
 
+logger = logging.getLogger("novacare_api")
 router = APIRouter(prefix="/v1", tags=["Appointments"])
 
 
@@ -17,24 +19,28 @@ def get_patient_appointments(
     Retrieve all appointments for a given patient.
     Returns upcoming and confirmed appointments only.
     """
+    logger.info(f"📅 Get Appointments Request - Patient: {patient_id}")
+
     dm = get_data_manager()
-    
+
     # Log the access
     log_event(
         event="appointments_accessed",
         patient_id=patient_id,
         endpoint=f"/v1/patients/{patient_id}/appointments"
     )
-    
+
     # Check if patient exists
     if patient_id not in dm.patients:
+        logger.error(f"❌ Patient {patient_id} not found")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Patient {patient_id} not found"
         )
-    
+
     # Return appointments (empty list if none)
     appointments = dm.appointments.get(patient_id, [])
+    logger.info(f"✅ Found {len(appointments)} appointments for {patient_id}")
     return appointments
 
 
@@ -55,6 +61,8 @@ def get_available_slots(
     - afternoon: 12:00 PM - 5:00 PM
     - evening: 5:00 PM - 9:00 PM
     """
+    logger.info(f"🕐 Get Available Slots - Filters: from={from_date}, to={to_date}, time={time_of_day}, provider={provider}")
+
     dm = get_data_manager()
 
     # Log the request
@@ -66,6 +74,7 @@ def get_available_slots(
 
     # Filter available slots
     slots = [slot for slot in dm.slots.values() if slot["available"]]
+    logger.info(f"Found {len(slots)} available slots before filtering")
 
     # Apply date filters if provided
     if from_date:
@@ -114,6 +123,7 @@ def get_available_slots(
     # Sort by date and time
     slots.sort(key=lambda x: (x["date"], x["time"]))
 
+    logger.info(f"✅ Returning {len(slots)} slots after filtering")
     return slots
 
 
@@ -127,9 +137,11 @@ def reschedule_appointment(
     Reschedule an existing appointment to a new slot.
     Validates slot availability and updates both the appointment and slot status.
     """
+    logger.info(f"🔄 Reschedule Request - Appointment: {appointment_id}, New Slot: {request.slot_id}")
+
     dm = get_data_manager()
     slot_id = request.slot_id
-    
+
     # Find the appointment across all patients
     appointment = None
     patient_id = None
@@ -141,8 +153,9 @@ def reschedule_appointment(
                 break
         if appointment:
             break
-    
+
     if not appointment:
+        logger.error(f"❌ Appointment {appointment_id} not found")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Appointment {appointment_id} not found"
@@ -150,14 +163,17 @@ def reschedule_appointment(
     
     # Check if the requested slot exists and is available
     if slot_id not in dm.slots:
+        logger.error(f"❌ Slot {slot_id} not found")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Slot {slot_id} not found"
         )
-    
+
     slot = dm.slots[slot_id]
-    
+    logger.info(f"📍 Slot found: {slot['date']} {slot['time']} with {slot['provider']}")
+
     if not slot["available"]:
+        logger.warning(f"⚠️ Slot {slot_id} is no longer available")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Slot {slot_id} is no longer available. Please select another slot."
@@ -190,7 +206,9 @@ def reschedule_appointment(
             "new": f"{slot['date']} {slot['time']}"
         }
     )
-    
+
+    logger.info(f"✅ Appointment {appointment_id} rescheduled: {old_date} {old_time} → {slot['date']} {slot['time']}")
+
     return RescheduleResponse(
         success=True,
         appointment=Appointment(**appointment),

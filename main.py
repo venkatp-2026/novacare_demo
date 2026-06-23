@@ -25,6 +25,7 @@ from routes import (
     insurance_router,
     appointment_confirmation_router
 )
+from utils.logger import RequestResponseLogger
 
 
 @asynccontextmanager
@@ -84,6 +85,9 @@ def custom_openapi():
     return app.openapi_schema
 
 app.openapi = custom_openapi
+
+# Add request/response logging middleware for debugging AI agent calls
+app.add_middleware(RequestResponseLogger)
 
 # CORS configuration - allow all origins for demo purposes
 app.add_middleware(

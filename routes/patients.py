@@ -8,6 +8,9 @@ import re
 from config import MOCK_API_TOKEN
 from data import get_data_manager
 
+import logging
+
+logger = logging.getLogger("novacare_api")
 
 router = APIRouter(prefix="/v1/patients", tags=["Patients"])
 
