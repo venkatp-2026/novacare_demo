@@ -217,27 +217,24 @@ def reschedule_appointment(
     )
 
 
-@router.get("/appointments/next-day-reminders", response_model=List[TomorrowAppointment])
-def get_next_day_appointment_reminders(
+@router.get("/appointments/reminders", response_model=List[TomorrowAppointment])
+def get_appointment_reminders(
     token: str = Depends(verify_token)
 ):
     """
-    Get all appointments scheduled for the next day for reminder notifications.
+    Get appointments for reminder notifications (next day appointments).
 
-    Returns appointment details with patient information for reminder purposes:
+    Returns appointment details with patient information:
     - Appointment ID, date, time
     - Provider name
     - Patient name and email
     - Location
 
-    Use this endpoint for:
-    - Automated appointment reminder emails/SMS
-    - Staff morning preparation lists
-    - Patient confirmation calls
+    Use for automated reminder emails/SMS and staff preparation.
 
     For demo: Returns appointments on 2026-06-25
     """
-    logger.info("📅 Get Next Day Appointment Reminders Request")
+    logger.info("📅 Get Appointment Reminders Request")
 
     dm = get_data_manager()
 
@@ -272,8 +269,8 @@ def get_next_day_appointment_reminders(
 
     # Log the request
     log_event(
-        event="next_day_reminders_accessed",
-        endpoint="/v1/appointments/next-day-reminders"
+        event="reminders_accessed",
+        endpoint="/v1/appointments/reminders"
     )
 
     return tomorrow_appointments
