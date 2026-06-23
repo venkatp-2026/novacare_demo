@@ -14,7 +14,7 @@ Mock API Guidance
 Timeline & Submission
 Interview Day: What to Expect
 Tips for Success
-
+   
 Introduction & Overview
 Welcome to the FDE technical exercise. This is a hands-on implementation challenge where you will design and build a Zendesk AI deployment for an enterprise healthcare customer.
 What this exercise assesses:
