@@ -35,9 +35,7 @@ class AppointmentSlot(BaseModel):
 
 
 class RescheduleRequest(BaseModel):
-    new_date: str = Field(..., example="2026-07-15", description="New appointment date (YYYY-MM-DD)")
-    new_time: str = Field(..., example="2:00 PM", description="New appointment time (e.g., '2:00 PM')")
-    provider: Optional[str] = Field(None, example="Dr. Williams", description="Provider name (optional, keeps current if not specified)")
+    slot_id: str = Field(..., example="SLOT-005", description="ID of the selected available slot")
     reason: Optional[str] = Field(None, example="Patient conflict", description="Optional reschedule reason")
 
 

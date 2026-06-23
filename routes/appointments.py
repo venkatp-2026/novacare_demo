@@ -134,18 +134,13 @@ def reschedule_appointment(
     token: str = Depends(verify_token)
 ):
     """
-    Reschedule an existing appointment to a new date and time.
-
-    SIMPLIFIED FOR DEMO: No slot_id needed! Just provide:
-    - new_date (YYYY-MM-DD format)
-    - new_time (e.g., "2:00 PM")
-    - provider (optional, keeps current provider if not specified)
-
-    The appointment will be updated and displayed in the dashboard.
+    Reschedule an existing appointment to a new slot.
+    Validates slot availability and updates both the appointment and slot status.
     """
-    logger.info(f"🔄 Reschedule Request - Appointment: {appointment_id}, New: {request.new_date} {request.new_time}")
+    logger.info(f"🔄 Reschedule Request - Appointment: {appointment_id}, New Slot: {request.slot_id}")
 
     dm = get_data_manager()
+    slot_id = request.slot_id
 
     # Find the appointment across all patients
     appointment = None
@@ -165,28 +160,41 @@ def reschedule_appointment(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Appointment {appointment_id} not found"
         )
+    
+    # Check if the requested slot exists and is available
+    if slot_id not in dm.slots:
+        logger.error(f"❌ Slot {slot_id} not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Slot {slot_id} not found"
+        )
 
-    # Store old values for logging
+    slot = dm.slots[slot_id]
+    logger.info(f"📍 Slot found: {slot['date']} {slot['time']} with {slot['provider']}")
+
+    if not slot["available"]:
+        logger.warning(f"⚠️ Slot {slot_id} is no longer available")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Slot {slot_id} is no longer available. Please select another slot."
+        )
+    
+    # Perform the reschedule
     old_date = appointment["date"]
     old_time = appointment["time"]
-    old_provider = appointment["provider"]
-
-    # Update appointment with new values
-    appointment["date"] = request.new_date
-    appointment["time"] = request.new_time
-
-    # Update provider if specified, otherwise keep current
-    if request.provider:
-        appointment["provider"] = request.provider
-        logger.info(f"📍 Provider changed from {old_provider} to {request.provider}")
-    else:
-        logger.info(f"📍 Keeping current provider: {old_provider}")
-
+    
+    appointment["date"] = slot["date"]
+    appointment["time"] = slot["time"]
+    appointment["provider"] = slot["provider"]
+    appointment["location"] = slot["location"]
     appointment["status"] = "confirmed"
-
+    
+    # Mark the slot as unavailable
+    slot["available"] = False
+    
     # Save changes to Excel
     save_working_data()
-
+    
     # Log the reschedule
     log_event(
         event="appointment_rescheduled",
@@ -195,15 +203,14 @@ def reschedule_appointment(
         endpoint=f"/v1/appointments/{appointment_id}",
         changes={
             "old": f"{old_date} {old_time}",
-            "new": f"{request.new_date} {request.new_time}",
-            "reason": request.reason
+            "new": f"{slot['date']} {slot['time']}"
         }
     )
 
-    logger.info(f"✅ Appointment {appointment_id} rescheduled: {old_date} {old_time} → {request.new_date} {request.new_time}")
+    logger.info(f"✅ Appointment {appointment_id} rescheduled: {old_date} {old_time} → {slot['date']} {slot['time']}")
 
     return RescheduleResponse(
         success=True,
         appointment=Appointment(**appointment),
-        message=f"Appointment rescheduled from {old_date} {old_time} to {request.new_date} {request.new_time}"
+        message=f"Appointment rescheduled from {old_date} {old_time} to {slot['date']} {slot['time']}"
     )
