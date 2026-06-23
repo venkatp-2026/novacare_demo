@@ -51,3 +51,16 @@ class AuditEntry(BaseModel):
     patient_id: Optional[str] = None
     endpoint: Optional[str] = None
     actor: Optional[str] = None
+
+
+class TomorrowAppointment(BaseModel):
+    """Tomorrow's appointment details for reminders"""
+    appointment_id: str = Field(..., example="APT-100")
+    patient_id: str = Field(..., example="PAT-001")
+    patient_name: str = Field(..., example="Jane Smith")
+    patient_email: str = Field(..., example="jane.smith@email.com")
+    date: str = Field(..., example="2026-06-25")
+    time: str = Field(..., example="11:00 AM")
+    provider: str = Field(..., example="Dr. Williams")
+    location: str = Field(..., example="Main Campus - Room 204")
+    type: str = Field(..., example="Routine Check-up")

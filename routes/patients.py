@@ -26,6 +26,7 @@ class PatientLookupResponse(BaseModel):
     found: bool
     patient_id: Optional[str] = None
     name: Optional[str] = None
+    language: Optional[str] = None
     multiple_matches: bool = False
     message: Optional[str] = None
 
@@ -156,7 +157,8 @@ async def lookup_patient(
                 "patient_id": patient_id,
                 "name": patient_data.get("name"),
                 "dob": patient_data.get("dob"),
-                "email": patient_data.get("email")
+                "email": patient_data.get("email"),
+                "language": patient_data.get("language")
             })
 
     # Handle results
@@ -172,6 +174,7 @@ async def lookup_patient(
             found=True,
             patient_id=matches[0]["patient_id"],
             name=matches[0]["name"],
+            language=matches[0]["language"],
             multiple_matches=False,
             message=f"Patient found: {matches[0]['name']} ({matches[0]['patient_id']})"
         )

@@ -114,6 +114,16 @@ class DataManager:
             "appointments": {
                 "PAT-001": [
                     {
+                        "appointment_id": "APT-100",
+                        "patient_id": "PAT-001",
+                        "date": "2026-06-25",
+                        "time": "11:00 AM",
+                        "provider": "Dr. Williams",
+                        "type": "Routine Check-up",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
                         "appointment_id": "APT-101",
                         "patient_id": "PAT-001",
                         "date": "2026-06-20",

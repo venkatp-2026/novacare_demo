@@ -1,7 +1,8 @@
 """Appointment management endpoints."""
 from fastapi import APIRouter, HTTPException, Depends, Query, status
 from typing import List, Optional
-from models import Appointment, AppointmentSlot, RescheduleRequest, RescheduleResponse
+from datetime import datetime, timedelta
+from models import Appointment, AppointmentSlot, RescheduleRequest, RescheduleResponse, TomorrowAppointment
 from utils import verify_token, log_event
 from data import get_data_manager, save_working_data
 import logging
@@ -214,3 +215,60 @@ def reschedule_appointment(
         appointment=Appointment(**appointment),
         message=f"Appointment rescheduled from {old_date} {old_time} to {slot['date']} {slot['time']}"
     )
+
+
+@router.get("/appointments/tomorrow", response_model=List[TomorrowAppointment])
+def get_tomorrow_appointments(
+    token: str = Depends(verify_token)
+):
+    """
+    Get all appointments scheduled for tomorrow (next day).
+
+    Returns appointment details with patient information for reminder purposes:
+    - Appointment ID, date, time
+    - Provider name
+    - Patient name and email
+    - Location
+
+    For demo: Returns appointments on 2026-06-25
+    """
+    logger.info("📅 Get Tomorrow's Appointments Request")
+
+    dm = get_data_manager()
+
+    # For demo purposes, use 2026-06-25 as "tomorrow"
+    tomorrow_date = "2026-06-25"
+
+    # Find all appointments for tomorrow
+    tomorrow_appointments = []
+
+    for patient_id, appointments in dm.appointments.items():
+        patient = dm.patients.get(patient_id)
+        if not patient:
+            continue
+
+        for apt in appointments:
+            if apt.get("date") == tomorrow_date:
+                tomorrow_appointments.append(
+                    TomorrowAppointment(
+                        appointment_id=apt["appointment_id"],
+                        patient_id=patient_id,
+                        patient_name=patient["name"],
+                        patient_email=patient["email"],
+                        date=apt["date"],
+                        time=apt["time"],
+                        provider=apt["provider"],
+                        location=apt["location"],
+                        type=apt["type"]
+                    )
+                )
+
+    logger.info(f"✅ Found {len(tomorrow_appointments)} appointments for tomorrow ({tomorrow_date})")
+
+    # Log the request
+    log_event(
+        event="tomorrow_appointments_accessed",
+        endpoint="/v1/appointments/tomorrow"
+    )
+
+    return tomorrow_appointments
