@@ -1,7 +1,7 @@
 """Health check endpoints."""
 from fastapi import APIRouter
 from datetime import datetime
-from ..data import get_data_manager
+from data import get_data_manager
 
 router = APIRouter(tags=["Health"])
 

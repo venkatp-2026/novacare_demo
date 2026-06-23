@@ -1,9 +1,9 @@
 """Appointment management endpoints."""
 from fastapi import APIRouter, HTTPException, Depends, Query, status
 from typing import List, Optional
-from ..models import Appointment, AppointmentSlot, RescheduleRequest, RescheduleResponse
-from ..utils import verify_token, log_event
-from ..data import get_data_manager, save_working_data
+from models import Appointment, AppointmentSlot, RescheduleRequest, RescheduleResponse
+from utils import verify_token, log_event
+from data import get_data_manager, save_working_data
 
 router = APIRouter(prefix="/v1", tags=["Appointments"])
 
