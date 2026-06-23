@@ -6,7 +6,8 @@ from .schemas import (
     AppointmentSlot,
     RescheduleRequest,
     RescheduleResponse,
-    AuditEntry
+    AuditEntry,
+    TomorrowAppointment
 )
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     "AppointmentSlot",
     "RescheduleRequest",
     "RescheduleResponse",
-    "AuditEntry"
+    "AuditEntry",
+    "TomorrowAppointment"
 ]
