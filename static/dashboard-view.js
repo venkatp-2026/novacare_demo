@@ -8,6 +8,10 @@ let activityLogs = [];
 const API_BASE = window.location.origin + '/v1';
 let API_TOKEN = null;
 
+// Auto-refresh interval (30 seconds)
+const AUTO_REFRESH_INTERVAL = 30000;
+let autoRefreshTimer = null;
+
 // Fetch API token from backend
 async function loadConfig() {
     try {
@@ -30,7 +34,38 @@ async function loadConfig() {
 document.addEventListener('DOMContentLoaded', async () => {
     await loadConfig();
     initTabs();
-    loadAllData();
+    await loadAllData();
+
+    // Start auto-refresh
+    startAutoRefresh();
+    console.log('🔄 Auto-refresh enabled (every 30 seconds)');
+});
+
+// Auto-refresh functions
+function startAutoRefresh() {
+    if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+    }
+    autoRefreshTimer = setInterval(() => {
+        console.log('🔄 Auto-refreshing data...');
+        loadAllData();
+    }, AUTO_REFRESH_INTERVAL);
+}
+
+function stopAutoRefresh() {
+    if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+    }
+}
+
+// Stop auto-refresh when page is hidden, resume when visible
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        stopAutoRefresh();
+    } else {
+        startAutoRefresh();
+    }
 });
 
 // Tab Switching
@@ -54,7 +89,13 @@ function initTabs() {
 
 // Load All Data
 async function loadAllData() {
-    document.getElementById('loading').style.display = 'block';
+    const loadingEl = document.getElementById('loading');
+    const wasVisible = loadingEl.style.display !== 'none';
+
+    // Only show loading spinner if it wasn't already visible (first load)
+    if (!wasVisible) {
+        loadingEl.style.display = 'block';
+    }
 
     try {
         const authHeader = `Bearer ${API_TOKEN}`;
@@ -95,11 +136,15 @@ async function loadAllData() {
         // Initialize filters
         populateFilters();
 
+        console.log(`✅ Data loaded: ${allPatients.length} patients, ${allAppointments.length} appointments`);
+
     } catch (error) {
         console.error('Error loading data:', error);
         alert('Error loading data. Please refresh the page.');
     } finally {
-        document.getElementById('loading').style.display = 'none';
+        if (!wasVisible) {
+            loadingEl.style.display = 'none';
+        }
     }
 }
 
