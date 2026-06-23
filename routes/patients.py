@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from datetime import datetime
 import re
 
-from config import MOCK_API_TOKEN
-from data import get_data_manager
+from ..config import MOCK_API_TOKEN
+from ..data import get_data_manager
 
 
 router = APIRouter(prefix="/v1/patients", tags=["Patients"])

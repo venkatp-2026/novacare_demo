@@ -9,10 +9,14 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from pathlib import Path
+from dotenv import load_dotenv
 
-from config import API_TITLE, API_DESCRIPTION, API_VERSION, ALLOWED_ORIGINS, MOCK_API_TOKEN
-from data import load_data_on_startup
-from routes import (
+# Load environment variables from .env file
+load_dotenv()
+
+from .config import API_TITLE, API_DESCRIPTION, API_VERSION, ALLOWED_ORIGINS, MOCK_API_TOKEN
+from .data import load_data_on_startup
+from .routes import (
     health_router,
     identity_router,
     appointments_router,

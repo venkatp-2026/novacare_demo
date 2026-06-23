@@ -1,8 +1,8 @@
 """Identity verification endpoints."""
 from fastapi import APIRouter, HTTPException, Depends, status
-from models import IdentityVerificationRequest, IdentityVerificationResponse
-from utils import verify_token, log_event
-from data import get_data_manager
+from ..models import IdentityVerificationRequest, IdentityVerificationResponse
+from ..utils import verify_token, log_event
+from ..data import get_data_manager
 
 router = APIRouter(prefix="/v1", tags=["Identity"])
 

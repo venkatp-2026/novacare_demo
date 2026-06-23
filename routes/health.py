@@ -1,14 +1,14 @@
 """Health check endpoints."""
 from fastapi import APIRouter
 from datetime import datetime
-from data import get_data_manager
+from ..data import get_data_manager
 
 router = APIRouter(tags=["Health"])
 
 
-@router.get("/")
-def read_root():
-    """Root endpoint - service health check."""
+@router.get("/api")
+def api_info():
+    """API information endpoint."""
     return {
         "service": "NovaCare Health - Epic EHR Mock API",
         "status": "operational",

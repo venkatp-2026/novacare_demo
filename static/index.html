@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaCare Health - Patient Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .hero-section {
+            background: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&q=80') center/cover;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            color: white;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            text-align: center;
+            max-width: 800px;
+            padding: 40px 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .services-section {
+            background: white;
+            padding: 80px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 60px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: #f8f9fa;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 35px;
+            color: white;
+        }
+
+        .service-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .service-card p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .chat-widget-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .chat-widget-placeholder {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 60px 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+        }
+
+        .chat-widget-placeholder h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .chat-widget-placeholder p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 32px;
+            }
+
+            .hero-content p {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1><i class="fas fa-hospital"></i> Welcome to NovaCare Health</h1>
+            <p>Your trusted partner in comprehensive healthcare management. Access appointments, connect with specialists, and manage your health journey - all in one place.</p>
+            <div class="cta-buttons">
+                <a href="/dashboard-view.html" class="btn btn-primary">
+                    <i class="fas fa-tachometer-alt"></i> View Dashboard
+                </a>
+                <a href="#chat" class="btn btn-secondary">
+                    <i class="fas fa-comments"></i> Chat with Us
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Comprehensive healthcare solutions designed for you</p>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Appointment Scheduling</h3>
+                    <p>Book, reschedule, and manage your appointments with ease. Choose from available time slots that fit your schedule.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3>Specialist Care</h3>
+                    <p>Access a network of experienced specialists across multiple disciplines. From diabetes management to cardiology.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3>Health Monitoring</h3>
+                    <p>Track your vitals, connect your devices, and keep your care team informed about your health metrics.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Get instant answers through our AI-powered chat assistant or connect with our support team anytime.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3>Medical Records</h3>
+                    <p>Access your complete medical history, lab results, and treatment plans securely from anywhere.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>HIPAA Compliant</h3>
+                    <p>Your privacy is our priority. All data is encrypted and protected under HIPAA regulations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Widget Section -->
+    <section class="chat-widget-section" id="chat">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">Need Help? Chat With Us</h2>
+            <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">Our AI assistant is here to help you with appointments, questions, and more</p>
+
+            <!-- Chat Widget Placeholder -->
+            <div class="chat-widget-placeholder" id="zendesk-widget-placeholder">
+                <i class="fas fa-comment-dots" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <h3>Zendesk Chat Widget Placeholder</h3>
+                <p>Insert your Zendesk Messaging widget code here.</p>
+                <p style="margin-top: 15px; font-size: 14px;">
+                    <strong>Instructions:</strong> Replace this section with the Zendesk widget snippet from your Admin Center → Channels → Messaging.
+                </p>
+            </div>
+
+            <!--
+            ZENDESK WIDGET CODE GOES HERE:
+
+            Example:
+            <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=YOUR-KEY"></script>
+
+            Or use the Web Widget (classic):
+            <script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=YOUR-KEY"></script>
+            <script type="text/javascript">
+              zE('webWidget', 'open');
+            </script>
+            -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p><i class="fas fa-hospital"></i> &copy; 2026 NovaCare Health. All rights reserved.</p>
+            <p style="margin-top: 10px;">
+                <a href="/dashboard-view.html" style="color: #3498db; text-decoration: none; margin: 0 15px;">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="/docs" style="color: #3498db; text-decoration: none; margin: 0 15px;">
+                    <i class="fas fa-book"></i> API Docs
+                </a>
+                <a href="mailto:support@novacarehealth.com" style="color: #3498db; text-decoration: none; margin: 0 15px;">
+                    <i class="fas fa-envelope"></i> Contact
+                </a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

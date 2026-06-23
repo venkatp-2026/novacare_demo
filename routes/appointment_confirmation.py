@@ -4,8 +4,8 @@ from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 
-from config import MOCK_API_TOKEN
-from data import get_data_manager
+from ..config import MOCK_API_TOKEN
+from ..data import get_data_manager
 
 
 router = APIRouter(prefix="/v1/appointments", tags=["Appointment Confirmation"])
