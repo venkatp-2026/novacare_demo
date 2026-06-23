@@ -23,7 +23,8 @@ from routes import (
     admin_router,
     patients_router,
     insurance_router,
-    appointment_confirmation_router
+    appointment_confirmation_router,
+    doctors_router
 )
 from utils.logger import RequestResponseLogger
 
@@ -119,6 +120,7 @@ app.include_router(admin_router)
 app.include_router(patients_router)
 app.include_router(insurance_router)
 app.include_router(appointment_confirmation_router)
+app.include_router(doctors_router)
 
 # Mount static files (must be last so API routes take precedence)
 static_path = Path(__file__).parent / "static"

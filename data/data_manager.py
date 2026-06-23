@@ -14,6 +14,8 @@ class DataManager:
         self.patients: Dict[str, Dict[str, Any]] = {}
         self.appointments: Dict[str, List[Dict[str, Any]]] = {}
         self.slots: Dict[str, Dict[str, Any]] = {}
+        self.doctors: Dict[str, Dict[str, Any]] = {}
+        self.doctor_appointments: Dict[str, List[Dict[str, Any]]] = {}
         self._default_data: Optional[Dict[str, Any]] = None
         
     def initialize_with_defaults(self) -> None:
@@ -256,6 +258,84 @@ class DataManager:
                 "SLOT-008": {"slot_id": "SLOT-008", "date": "2026-07-05", "time": "4:00 PM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
                 "SLOT-009": {"slot_id": "SLOT-009", "date": "2026-07-08", "time": "9:00 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
                 "SLOT-010": {"slot_id": "SLOT-010", "date": "2026-07-10", "time": "2:30 PM", "provider": "Dr. Patel", "provider_language": "English, Hindi, Gujarati", "location": "West Building - Office 102", "available": True},
+            },
+            "doctors": {
+                "DOC-001": {
+                    "doctor_id": "DOC-001",
+                    "name": "Dr. Sarah Williams",
+                    "dob": "1978-04-15",
+                    "specialty": "Primary Care",
+                    "languages": "English",
+                    "email": "s.williams@novacare.com",
+                    "phone": "(555) 100-2001",
+                    "npi": "1234567890",
+                    "license": "MD-12345",
+                    "location": "Main Campus - Room 204",
+                    "status": "active"
+                },
+                "DOC-002": {
+                    "doctor_id": "DOC-002",
+                    "name": "Dr. Michael Chen",
+                    "dob": "1982-09-22",
+                    "specialty": "Internal Medicine",
+                    "languages": "English, Mandarin",
+                    "email": "m.chen@novacare.com",
+                    "phone": "(555) 100-2002",
+                    "npi": "2345678901",
+                    "license": "MD-23456",
+                    "location": "North Clinic - Suite 301",
+                    "status": "active"
+                }
+            },
+            "doctor_appointments": {
+                "DOC-001": [
+                    {
+                        "appointment_id": "APT-101",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-001",
+                        "patient_name": "Jane Smith",
+                        "date": "2026-06-20",
+                        "time": "10:00 AM",
+                        "type": "Follow-up",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-103",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-001",
+                        "patient_name": "Jane Smith",
+                        "date": "2026-08-10",
+                        "time": "9:00 AM",
+                        "type": "Lab Results Review",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    }
+                ],
+                "DOC-002": [
+                    {
+                        "appointment_id": "APT-102",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-001",
+                        "patient_name": "Jane Smith",
+                        "date": "2026-07-15",
+                        "time": "2:30 PM",
+                        "type": "Annual Check-up",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-601",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-006",
+                        "patient_name": "Emma Thompson",
+                        "date": "2026-06-24",
+                        "time": "4:00 PM",
+                        "type": "Pediatric Asthma Check",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    }
+                ]
             }
         }
     
@@ -263,14 +343,18 @@ class DataManager:
         """Load data from default into memory (in-memory only, no file I/O)."""
         if self._default_data is None:
             self.initialize_with_defaults()
-        
+
         # Deep copy from default data
         self.patients = copy.deepcopy(self._default_data.get('patients', {}))
         self.appointments = copy.deepcopy(self._default_data.get('appointments', {}))
+        self.doctors = copy.deepcopy(self._default_data.get('doctors', {}))
+        self.doctor_appointments = copy.deepcopy(self._default_data.get('doctor_appointments', {}))
         self.slots = copy.deepcopy(self._default_data.get('slots', {}))
         
         print(f"Loaded data into memory: {len(self.patients)} patients, "
               f"{sum(len(appts) for appts in self.appointments.values())} appointments, "
+              f"{len(self.doctors)} doctors, "
+              f"{sum(len(appts) for appts in self.doctor_appointments.values())} doctor appointments, "
               f"{len(self.slots)} slots")
     
     def save_to_working_copy(self) -> None:

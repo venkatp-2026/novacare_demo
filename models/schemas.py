@@ -64,3 +64,50 @@ class TomorrowAppointment(BaseModel):
     provider: str = Field(..., example="Dr. Williams")
     location: str = Field(..., example="Main Campus - Room 204")
     type: str = Field(..., example="Routine Check-up")
+
+
+class DoctorLookupRequest(BaseModel):
+    """Request model for doctor lookup by name and DOB"""
+    name: str = Field(..., example="Dr. Sarah Williams", description="Doctor's full name")
+    dob: str = Field(..., example="1978-04-15", description="Date of birth in YYYY-MM-DD format")
+
+
+class DoctorLookupResponse(BaseModel):
+    """Response model for doctor lookup"""
+    found: bool
+    doctor_id: Optional[str] = None
+    name: Optional[str] = None
+    specialty: Optional[str] = None
+    languages: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    npi: Optional[str] = None
+    license: Optional[str] = None
+    location: Optional[str] = None
+    message: Optional[str] = None
+
+
+class DoctorAppointment(BaseModel):
+    """Doctor's appointment details"""
+    appointment_id: str = Field(..., example="APT-101")
+    doctor_id: str = Field(..., example="DOC-001")
+    patient_id: str = Field(..., example="PAT-001")
+    patient_name: str = Field(..., example="Jane Smith")
+    date: str = Field(..., example="2026-06-20")
+    time: str = Field(..., example="10:00 AM")
+    type: str = Field(..., example="Follow-up")
+    location: str = Field(..., example="Main Campus - Room 204")
+    status: str = Field(..., example="confirmed")
+
+
+class CancelAppointmentsRequest(BaseModel):
+    """Request to cancel doctor's appointments in a date range"""
+    from_date: str = Field(..., example="2026-06-20", description="Start date (YYYY-MM-DD)")
+    to_date: str = Field(..., example="2026-06-30", description="End date (YYYY-MM-DD)")
+
+
+class CancelAppointmentsResponse(BaseModel):
+    """Response for appointment cancellation"""
+    success: bool
+    cancelled_count: int
+    message: str

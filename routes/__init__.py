@@ -6,6 +6,7 @@ from .health import router as health_router
 from .patients import router as patients_router
 from .insurance import router as insurance_router
 from .appointment_confirmation import router as appointment_confirmation_router
+from .doctors import router as doctors_router
 
 __all__ = [
     "identity_router",
@@ -14,5 +15,6 @@ __all__ = [
     "health_router",
     "patients_router",
     "insurance_router",
-    "appointment_confirmation_router"
+    "appointment_confirmation_router",
+    "doctors_router"
 ]
