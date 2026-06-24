@@ -248,15 +248,46 @@ class DataManager:
                 ]
             },
             "slots": {
+                # June 2026 - Remaining slots
                 "SLOT-001": {"slot_id": "SLOT-001", "date": "2026-06-25", "time": "2:00 PM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
                 "SLOT-002": {"slot_id": "SLOT-002", "date": "2026-06-26", "time": "9:30 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
                 "SLOT-003": {"slot_id": "SLOT-003", "date": "2026-06-27", "time": "11:00 AM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
                 "SLOT-004": {"slot_id": "SLOT-004", "date": "2026-06-28", "time": "3:30 PM", "provider": "Dr. Patel", "provider_language": "English, Hindi, Gujarati", "location": "West Building - Office 102", "available": True},
+
+                # July 2026 - Dr. Williams slots (3 slots)
+                "SLOT-101": {"slot_id": "SLOT-101", "date": "2026-07-02", "time": "9:00 AM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+                "SLOT-102": {"slot_id": "SLOT-102", "date": "2026-07-16", "time": "2:00 PM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+                "SLOT-103": {"slot_id": "SLOT-103", "date": "2026-07-23", "time": "10:30 AM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+
+                # July 2026 - Dr. Chen slots (3 slots)
+                "SLOT-104": {"slot_id": "SLOT-104", "date": "2026-07-06", "time": "11:00 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+                "SLOT-105": {"slot_id": "SLOT-105", "date": "2026-07-14", "time": "3:30 PM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+                "SLOT-106": {"slot_id": "SLOT-106", "date": "2026-07-22", "time": "9:30 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+
+                # August 2026 - Dr. Williams slots (3 slots)
+                "SLOT-201": {"slot_id": "SLOT-201", "date": "2026-08-04", "time": "8:30 AM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+                "SLOT-202": {"slot_id": "SLOT-202", "date": "2026-08-13", "time": "1:00 PM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+                "SLOT-203": {"slot_id": "SLOT-203", "date": "2026-08-25", "time": "3:00 PM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+
+                # August 2026 - Dr. Chen slots (3 slots)
+                "SLOT-204": {"slot_id": "SLOT-204", "date": "2026-08-06", "time": "10:00 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+                "SLOT-205": {"slot_id": "SLOT-205", "date": "2026-08-17", "time": "2:30 PM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+                "SLOT-206": {"slot_id": "SLOT-206", "date": "2026-08-27", "time": "11:30 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+
+                # September 2026 - Dr. Williams slots (3 slots)
+                "SLOT-301": {"slot_id": "SLOT-301", "date": "2026-09-03", "time": "9:30 AM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+                "SLOT-302": {"slot_id": "SLOT-302", "date": "2026-09-15", "time": "1:30 PM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+                "SLOT-303": {"slot_id": "SLOT-303", "date": "2026-09-22", "time": "11:00 AM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
+
+                # September 2026 - Dr. Chen slots (3 slots)
+                "SLOT-304": {"slot_id": "SLOT-304", "date": "2026-09-08", "time": "10:30 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+                "SLOT-305": {"slot_id": "SLOT-305", "date": "2026-09-16", "time": "3:00 PM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+                "SLOT-306": {"slot_id": "SLOT-306", "date": "2026-09-29", "time": "9:00 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
+
+                # Other providers (keeping original slots)
                 "SLOT-005": {"slot_id": "SLOT-005", "date": "2026-07-01", "time": "8:00 AM", "provider": "Dr. Lee", "provider_language": "English, Korean", "location": "Therapy Center - Room A", "available": True},
                 "SLOT-006": {"slot_id": "SLOT-006", "date": "2026-07-02", "time": "1:30 PM", "provider": "Dr. Rodriguez", "provider_language": "English, Spanish", "location": "Endocrinology Wing - Room 5", "available": True},
                 "SLOT-007": {"slot_id": "SLOT-007", "date": "2026-07-03", "time": "10:00 AM", "provider": "Dr. Kim", "provider_language": "English, Korean", "location": "Wellness Center - Suite 210", "available": True},
-                "SLOT-008": {"slot_id": "SLOT-008", "date": "2026-07-05", "time": "4:00 PM", "provider": "Dr. Williams", "provider_language": "English", "location": "Main Campus - Room 204", "available": True},
-                "SLOT-009": {"slot_id": "SLOT-009", "date": "2026-07-08", "time": "9:00 AM", "provider": "Dr. Chen", "provider_language": "English, Mandarin", "location": "North Clinic - Suite 301", "available": True},
                 "SLOT-010": {"slot_id": "SLOT-010", "date": "2026-07-10", "time": "2:30 PM", "provider": "Dr. Patel", "provider_language": "English, Hindi, Gujarati", "location": "West Building - Office 102", "available": True},
             },
             "doctors": {
