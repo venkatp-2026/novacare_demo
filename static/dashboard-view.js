@@ -484,6 +484,26 @@ function populateFilters() {
         option.textContent = doctor;
         doctorSelect.appendChild(option);
     });
+
+    // Populate availability slot filters
+    const slotDoctorSelect = document.getElementById('filter-slot-doctor');
+    const slotLocationSelect = document.getElementById('filter-slot-location');
+
+    const slotDoctors = [...new Set(allSlots.map(slot => slot.provider))];
+    slotDoctors.forEach(doctor => {
+        const option = document.createElement('option');
+        option.value = doctor;
+        option.textContent = doctor;
+        slotDoctorSelect.appendChild(option);
+    });
+
+    const slotLocations = [...new Set(allSlots.map(slot => slot.location.split(' - ')[0]))];
+    slotLocations.forEach(location => {
+        const option = document.createElement('option');
+        option.value = location;
+        option.textContent = location;
+        slotLocationSelect.appendChild(option);
+    });
 }
 
 // Apply Filters
@@ -561,4 +581,68 @@ function formatDate(dateStr) {
         month: 'short',
         day: 'numeric'
     });
+}
+
+// Apply Availability Filters
+function applyAvailabilityFilters() {
+    const dateFrom = document.getElementById('filter-slot-date-from').value;
+    const dateTo = document.getElementById('filter-slot-date-to').value;
+    const doctor = document.getElementById('filter-slot-doctor').value;
+    const location = document.getElementById('filter-slot-location').value;
+
+    let filtered = allSlots.filter(slot => slot.available);
+
+    if (dateFrom) {
+        filtered = filtered.filter(slot => slot.date >= dateFrom);
+    }
+    if (dateTo) {
+        filtered = filtered.filter(slot => slot.date <= dateTo);
+    }
+    if (doctor) {
+        filtered = filtered.filter(slot => slot.provider === doctor);
+    }
+    if (location) {
+        filtered = filtered.filter(slot => slot.location.includes(location));
+    }
+
+    // Re-render with filtered data
+    const grid = document.getElementById('availability-grid');
+    grid.innerHTML = '';
+
+    filtered.forEach(slot => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="card-title">${slot.provider}</div>
+                <div class="card-icon icon-green">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+            <div class="card-body">
+                <p><strong>Date:</strong> ${formatDate(slot.date)}</p>
+                <p><strong>Time:</strong> ${slot.time}</p>
+                <p><strong>Location:</strong> ${slot.location}</p>
+                <p><strong>Languages:</strong> ${slot.provider_language || 'English'}</p>
+                <span class="badge badge-confirmed">Available</span>
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+
+    // Show message if no results
+    if (filtered.length === 0) {
+        grid.innerHTML = '<div style="text-align: center; padding: 40px; color: white; font-size: 18px;">No available slots match your filters</div>';
+    }
+}
+
+// Clear Availability Filters
+function clearAvailabilityFilters() {
+    document.getElementById('filter-slot-date-from').value = '';
+    document.getElementById('filter-slot-date-to').value = '';
+    document.getElementById('filter-slot-doctor').value = '';
+    document.getElementById('filter-slot-location').value = '';
+    renderAvailability();
 }

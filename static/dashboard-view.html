@@ -501,6 +501,22 @@
 
         <!-- Availability Tab -->
         <div class="tab-content" id="tab-availability">
+            <div class="filter-bar">
+                <input type="date" class="filter-input" id="filter-slot-date-from" placeholder="From Date">
+                <input type="date" class="filter-input" id="filter-slot-date-to" placeholder="To Date">
+                <select class="filter-input" id="filter-slot-doctor">
+                    <option value="">All Providers</option>
+                </select>
+                <select class="filter-input" id="filter-slot-location">
+                    <option value="">All Locations</option>
+                </select>
+                <button class="btn btn-primary" onclick="applyAvailabilityFilters()">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
+                <button class="btn btn-primary" onclick="clearAvailabilityFilters()">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            </div>
             <div class="cards-grid" id="availability-grid"></div>
         </div>
 
