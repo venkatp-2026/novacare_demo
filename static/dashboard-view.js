@@ -213,34 +213,113 @@ function closeSidebar() {
     document.getElementById('sidebar-overlay').classList.remove('active');
 }
 
+// Show Appointment Details in Sidebar
+function showAppointmentDetails(apt, patient) {
+    const sidebar = document.getElementById('patient-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const title = document.getElementById('modal-title');
+    const body = document.getElementById('modal-body');
+
+    title.textContent = `Appointment: ${apt.appointment_id}`;
+
+    body.innerHTML = `
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Appointment ID</div>
+                <div class="info-value">${apt.appointment_id}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Status</div>
+                <div class="info-value"><span class="badge badge-${apt.status}">${apt.status}</span></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Date</div>
+                <div class="info-value">${formatDate(apt.date)}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Time</div>
+                <div class="info-value">${apt.time}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Provider</div>
+                <div class="info-value">${apt.provider}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Type</div>
+                <div class="info-value">${apt.type}</div>
+            </div>
+        </div>
+
+        <div class="info-item" style="grid-column: 1 / -1; margin-top: 10px;">
+            <div class="info-label">Location</div>
+            <div class="info-value">${apt.location}</div>
+        </div>
+
+        <div class="section-title" style="margin-top: 25px;">
+            <i class="fas fa-user"></i> Patient Information
+        </div>
+        ${patient ? `
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Patient Name</div>
+                    <div class="info-value">${patient.name}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Patient ID</div>
+                    <div class="info-value">${patient.patient_id}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Age</div>
+                    <div class="info-value">${patient.age} years old</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Language</div>
+                    <div class="info-value">${patient.language}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Phone</div>
+                    <div class="info-value">${patient.phone}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">${patient.email}</div>
+                </div>
+            </div>
+            <div class="section-title">
+                <i class="fas fa-notes-medical"></i> Medical History
+            </div>
+            <div class="medical-history-box">
+                ${patient.medical_history}
+            </div>
+        ` : `<p style="color: #7f8c8d; padding: 15px;">Patient information not available</p>`}
+    `;
+
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+}
+
 // Render Appointments
 function renderAppointments() {
     const grid = document.getElementById('appointments-grid');
     grid.innerHTML = '';
+    grid.className = 'patients-list'; // Use same style as patients list
 
     allAppointments.forEach(apt => {
         const patient = allPatients.find(p => p.patient_id === apt.patient_id);
-        const card = document.createElement('div');
-        card.className = 'card';
+        const item = document.createElement('div');
+        item.className = 'patient-list-item';
+        item.onclick = () => showAppointmentDetails(apt, patient);
 
-        card.innerHTML = `
-            <div class="card-header">
-                <div class="card-title">${apt.appointment_id}</div>
-                <div class="card-icon icon-green">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-            </div>
-            <div class="card-body">
-                <p><strong>Patient:</strong> ${patient ? patient.name : apt.patient_id}</p>
-                <p><strong>Date:</strong> ${formatDate(apt.date)} at ${apt.time}</p>
-                <p><strong>Provider:</strong> ${apt.provider}</p>
-                <p><strong>Type:</strong> ${apt.type}</p>
-                <p><strong>Location:</strong> ${apt.location}</p>
-                <span class="badge badge-${apt.status}">${apt.status}</span>
-            </div>
+        // Use calendar icon for appointments
+        const icon = '📅';
+
+        item.innerHTML = `
+            <div class="patient-avatar">${icon}</div>
+            <div class="patient-name">${patient ? patient.name : apt.patient_id} - ${formatDate(apt.date)}</div>
+            <div class="patient-id-badge">${apt.appointment_id}</div>
         `;
 
-        grid.appendChild(card);
+        grid.appendChild(item);
     });
 }
 
@@ -439,30 +518,23 @@ function applyFilters() {
     // Re-render with filtered data
     const grid = document.getElementById('appointments-grid');
     grid.innerHTML = '';
+    grid.className = 'patients-list'; // Use same style as patients list
 
     filtered.forEach(apt => {
         const patient = allPatients.find(p => p.patient_id === apt.patient_id);
-        const card = document.createElement('div');
-        card.className = 'card';
+        const item = document.createElement('div');
+        item.className = 'patient-list-item';
+        item.onclick = () => showAppointmentDetails(apt, patient);
 
-        card.innerHTML = `
-            <div class="card-header">
-                <div class="card-title">${apt.appointment_id}</div>
-                <div class="card-icon icon-green">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-            </div>
-            <div class="card-body">
-                <p><strong>Patient:</strong> ${patient ? patient.name : apt.patient_id}</p>
-                <p><strong>Date:</strong> ${formatDate(apt.date)} at ${apt.time}</p>
-                <p><strong>Provider:</strong> ${apt.provider}</p>
-                <p><strong>Type:</strong> ${apt.type}</p>
-                <p><strong>Location:</strong> ${apt.location}</p>
-                <span class="badge badge-${apt.status}">${apt.status}</span>
-            </div>
+        const icon = '📅';
+
+        item.innerHTML = `
+            <div class="patient-avatar">${icon}</div>
+            <div class="patient-name">${patient ? patient.name : apt.patient_id} - ${formatDate(apt.date)}</div>
+            <div class="patient-id-badge">${apt.appointment_id}</div>
         `;
 
-        grid.appendChild(card);
+        grid.appendChild(item);
     });
 }
 

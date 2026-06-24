@@ -301,6 +301,61 @@ class DataManager:
                         "status": "confirmed"
                     },
                     {
+                        "appointment_id": "APT-1001",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-002",
+                        "patient_name": "Robert Johnson",
+                        "date": "2026-07-05",
+                        "time": "9:00 AM",
+                        "type": "Follow-up",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-1002",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-004",
+                        "patient_name": "John Smith",
+                        "date": "2026-07-12",
+                        "time": "11:00 AM",
+                        "type": "Consultation",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-1003",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-003",
+                        "patient_name": "Maria Garcia",
+                        "date": "2026-07-18",
+                        "time": "2:00 PM",
+                        "type": "Check-up",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-1004",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-005",
+                        "patient_name": "John Smith",
+                        "date": "2026-07-25",
+                        "time": "3:30 PM",
+                        "type": "Follow-up",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-1005",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-001",
+                        "patient_name": "Jane Smith",
+                        "date": "2026-08-03",
+                        "time": "10:00 AM",
+                        "type": "Lab Results Review",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
                         "appointment_id": "APT-103",
                         "doctor_id": "DOC-001",
                         "patient_id": "PAT-001",
@@ -310,9 +365,97 @@ class DataManager:
                         "type": "Lab Results Review",
                         "location": "Main Campus - Room 204",
                         "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-1006",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-006",
+                        "patient_name": "Emma Thompson",
+                        "date": "2026-08-15",
+                        "time": "4:00 PM",
+                        "type": "Pediatric Check",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-1007",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-002",
+                        "patient_name": "Robert Johnson",
+                        "date": "2026-08-22",
+                        "time": "11:30 AM",
+                        "type": "Consultation",
+                        "location": "Main Campus - Room 204",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-1008",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-004",
+                        "patient_name": "John Smith",
+                        "date": "2026-09-02",
+                        "time": "9:00 AM",
+                        "type": "Annual Physical",
+                        "location": "Main Campus - Room 204",
+                        "status": "scheduled"
+                    },
+                    {
+                        "appointment_id": "APT-1009",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-003",
+                        "patient_name": "Maria Garcia",
+                        "date": "2026-09-10",
+                        "time": "1:00 PM",
+                        "type": "Follow-up",
+                        "location": "Main Campus - Room 204",
+                        "status": "scheduled"
+                    },
+                    {
+                        "appointment_id": "APT-1010",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-005",
+                        "patient_name": "John Smith",
+                        "date": "2026-09-18",
+                        "time": "2:30 PM",
+                        "type": "Cardiology Follow-up",
+                        "location": "Main Campus - Room 204",
+                        "status": "scheduled"
+                    },
+                    {
+                        "appointment_id": "APT-1011",
+                        "doctor_id": "DOC-001",
+                        "patient_id": "PAT-001",
+                        "patient_name": "Jane Smith",
+                        "date": "2026-09-25",
+                        "time": "10:00 AM",
+                        "type": "Diabetes Review",
+                        "location": "Main Campus - Room 204",
+                        "status": "scheduled"
                     }
                 ],
                 "DOC-002": [
+                    {
+                        "appointment_id": "APT-601",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-006",
+                        "patient_name": "Emma Thompson",
+                        "date": "2026-06-24",
+                        "time": "4:00 PM",
+                        "type": "Pediatric Asthma Check",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-2001",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-002",
+                        "patient_name": "Robert Johnson",
+                        "date": "2026-07-08",
+                        "time": "9:30 AM",
+                        "type": "Internal Medicine Consultation",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    },
                     {
                         "appointment_id": "APT-102",
                         "doctor_id": "DOC-002",
@@ -325,15 +468,114 @@ class DataManager:
                         "status": "confirmed"
                     },
                     {
-                        "appointment_id": "APT-601",
+                        "appointment_id": "APT-2002",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-003",
+                        "patient_name": "Maria Garcia",
+                        "date": "2026-07-20",
+                        "time": "10:00 AM",
+                        "type": "Diabetes Management",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-2003",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-005",
+                        "patient_name": "John Smith",
+                        "date": "2026-07-28",
+                        "time": "3:00 PM",
+                        "type": "Cardiology Consultation",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-2004",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-004",
+                        "patient_name": "John Smith",
+                        "date": "2026-08-05",
+                        "time": "11:00 AM",
+                        "type": "Follow-up",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-2005",
                         "doctor_id": "DOC-002",
                         "patient_id": "PAT-006",
                         "patient_name": "Emma Thompson",
-                        "date": "2026-06-24",
-                        "time": "4:00 PM",
-                        "type": "Pediatric Asthma Check",
+                        "date": "2026-08-12",
+                        "time": "4:30 PM",
+                        "type": "Pediatric Follow-up",
                         "location": "North Clinic - Suite 301",
                         "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-2006",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-001",
+                        "patient_name": "Jane Smith",
+                        "date": "2026-08-20",
+                        "time": "1:00 PM",
+                        "type": "Lab Review",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-2007",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-002",
+                        "patient_name": "Robert Johnson",
+                        "date": "2026-08-28",
+                        "time": "9:00 AM",
+                        "type": "Hypertension Management",
+                        "location": "North Clinic - Suite 301",
+                        "status": "confirmed"
+                    },
+                    {
+                        "appointment_id": "APT-2008",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-003",
+                        "patient_name": "Maria Garcia",
+                        "date": "2026-09-05",
+                        "time": "10:30 AM",
+                        "type": "Diabetes Follow-up",
+                        "location": "North Clinic - Suite 301",
+                        "status": "scheduled"
+                    },
+                    {
+                        "appointment_id": "APT-2009",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-005",
+                        "patient_name": "John Smith",
+                        "date": "2026-09-12",
+                        "time": "2:00 PM",
+                        "type": "Cardiac Assessment",
+                        "location": "North Clinic - Suite 301",
+                        "status": "scheduled"
+                    },
+                    {
+                        "appointment_id": "APT-2010",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-004",
+                        "patient_name": "John Smith",
+                        "date": "2026-09-19",
+                        "time": "11:30 AM",
+                        "type": "Physical Exam",
+                        "location": "North Clinic - Suite 301",
+                        "status": "scheduled"
+                    },
+                    {
+                        "appointment_id": "APT-2011",
+                        "doctor_id": "DOC-002",
+                        "patient_id": "PAT-006",
+                        "patient_name": "Emma Thompson",
+                        "date": "2026-09-26",
+                        "time": "4:00 PM",
+                        "type": "Asthma Review",
+                        "location": "North Clinic - Suite 301",
+                        "status": "scheduled"
                     }
                 ]
             }
